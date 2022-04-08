@@ -11,7 +11,11 @@
     </template>
   </base-form>
   <section>
-    <ListItems :items="items"> </ListItems>
+    <ListItems
+      :items="items"
+      @itemDeleted="deleteItem($event)"
+      @itemEdited="editItem($event)"
+    />
   </section>
 </template>
 
@@ -52,7 +56,22 @@ export default {
   methods: {
     createTeam() {
       console.log('create team');
+    },
+    editItem(id) {
+      console.log(id);
+    },
+    deleteItem(id) {
+      console.log(id);
     }
   }
 };
 </script>
+
+<style scoped>
+:deep(.data-value) {
+  width: calc((80% / 3));
+}
+:deep(.data-field) {
+  width: calc((80% / 3));
+}
+</style>

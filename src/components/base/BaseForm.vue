@@ -37,13 +37,18 @@ h2 {
 }
 .wrapper {
   display: flex;
-  align-items: center;
   justify-content: space-between;
 }
 .wrapper:deep(div) {
   width: 50%;
 }
 .wrapper:deep(input) {
+  width: 95%;
+  margin-bottom: 1rem;
+  padding: 0.25rem;
+}
+
+.wrapper:deep(select) {
   width: 95%;
   margin-bottom: 1rem;
   padding: 0.25rem;

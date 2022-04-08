@@ -37,10 +37,10 @@ button {
   text-transform: capitalize;
   font-family: Avenir, Helvetica, Arial, sans-serif;
 }
-input {
+input,
+select {
   outline: none;
   border: 1px solid var(--black);
-  padding-left: 1rem !important;
   background: none;
   font-size: unset;
   font-weight: unset;
@@ -49,4 +49,14 @@ input {
 }
 input:focus {
   background-color: var(--grey);
+}
+input:read-only,
+input[type='date'] {
+  user-select: none;
+  cursor: default;
+  background-color: var(--white);
+  position: relative;
+}
+input[type='date']::-webkit-calendar-picker-indicator {
+  cursor: pointer;
 }
