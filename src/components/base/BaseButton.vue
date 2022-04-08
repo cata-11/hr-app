@@ -15,6 +15,9 @@ button {
   padding: 0.5rem 1rem;
   font-size: 1.25rem;
   transition: all 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 button:hover {
   filter: brightness(90%);

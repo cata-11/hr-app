@@ -23,7 +23,7 @@ export default {
 
 <style scoped>
 form {
-  width: 95%;
+  width: 97.5%;
   margin: 0 auto;
 }
 header {
@@ -40,10 +40,10 @@ h2 {
   align-items: center;
   justify-content: space-between;
 }
-.wrapper::v-deep div {
+.wrapper:deep(div) {
   width: 50%;
 }
-.wrapper::v-deep input {
+.wrapper:deep(input) {
   width: 95%;
   margin-bottom: 1rem;
   padding: 0.25rem;
