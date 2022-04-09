@@ -54,12 +54,12 @@ export default {
       return true;
     },
     createRole() {
-      if (!this.isFormValid()) {
-        return;
-      }
-      console.log('create role');
       this.role.date = getDate();
       this.$emit('role-created', { ...this.role });
+
+      for (const key in this.role) {
+        this.role[key] = '';
+      }
     },
     editRole() {
       const initialData = { ...this.roleData };

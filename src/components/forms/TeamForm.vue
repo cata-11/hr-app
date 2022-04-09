@@ -82,6 +82,10 @@ export default {
     createTeam() {
       this.team.date = getDate();
       this.$emit('team-created', { ...this.team });
+
+      for (const key in this.team) {
+        this.tesm[key] = '';
+      }
     },
     editTeam() {
       const initialData = { ...this.teamData };
