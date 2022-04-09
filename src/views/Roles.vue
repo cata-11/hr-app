@@ -3,7 +3,14 @@
     <template #header>Create a new role</template>
     <template #body>
       <div>
-        <input type="text" placeholder="Name" />
+        <input
+          type="text"
+          placeholder="Name"
+          v-model="role.name"
+          :class="{ invalid: !!error.name }"
+          @input="isNameValid"
+        />
+        <p class="error">{{ error.name }}</p>
       </div>
     </template>
   </base-form>
@@ -11,6 +18,7 @@
   <section>
     <ListItems
       :items="items"
+      :fields="fields"
       @itemDeleted="deleteItem($event)"
       @itemEdited="editItem($event)"
     />
@@ -28,6 +36,9 @@ export default {
   },
   data() {
     return {
+      role: { name: '' },
+      error: { name: '' },
+      fields: ['Name', 'Date'],
       items: [
         {
           field1: 'data',
@@ -49,14 +60,38 @@ export default {
     };
   },
   methods: {
+    isNameValid() {
+      this.error.name = '';
+      if (this.role.name === '') {
+        this.error.name = "Can't be empty";
+        return false;
+      }
+      return true;
+    },
+    getDate() {
+      const today = new Date();
+      let year = today.getFullYear();
+      let month = today.getMonth() + 1;
+      let day = today.getDate();
+
+      if (day < 10) day = '0' + day;
+      if (month < 10) month = '0' + month;
+
+      return day + '.' + month + '.' + year;
+    },
     createRole() {
+      if (!this.isNameValid()) {
+        return;
+      }
       console.log('create role');
+      this.role.date = this.getDate();
+      this.items.unshift({ ...this.role });
     },
-    editItem(id) {
-      console.log(id);
+    editItem(idx) {
+      console.log(idx);
     },
-    deleteItem(id) {
-      console.log(id);
+    deleteItem(idx) {
+      this.items.splice(idx, 1);
     }
   }
 };

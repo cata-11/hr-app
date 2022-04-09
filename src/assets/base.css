@@ -57,6 +57,12 @@ input[type='date'] {
   background-color: var(--white);
   position: relative;
 }
+input[type='date'] {
+  padding: 0.19rem !important;
+}
+input:read-only {
+  padding: 0.28rem !important;
+}
 input[type='date']::-webkit-calendar-picker-indicator {
   cursor: pointer;
 }

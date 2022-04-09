@@ -42,15 +42,20 @@ h2 {
 .wrapper:deep(div) {
   width: 50%;
 }
-.wrapper:deep(input) {
-  width: 95%;
-  margin-bottom: 1rem;
-  padding: 0.25rem;
-}
-
+.wrapper:deep(input),
 .wrapper:deep(select) {
   width: 95%;
-  margin-bottom: 1rem;
   padding: 0.25rem;
+  margin-top: 0.25rem;
+}
+.wrapper:deep(p.error) {
+  font-size: 0.75rem;
+  color: var(--red);
+  height: 0.9rem;
+}
+.wrapper:deep(input.invalid),
+.wrapper:deep(select.invalid) {
+  border-color: var(--red);
+  color: var(--red);
 }
 </style>

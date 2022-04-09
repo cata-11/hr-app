@@ -3,16 +3,31 @@
     <template #header>Create a new team</template>
     <template #body>
       <div>
-        <input type="text" placeholder="Name" />
+        <input
+          type="text"
+          placeholder="Name"
+          v-model="team.name"
+          :class="{ invalid: !!error.name }"
+          @input="isNameValid"
+        />
+        <p class="error">{{ error.name }}</p>
       </div>
       <div>
-        <input type="text" placeholder="Role" />
+        <input
+          type="text"
+          placeholder="Manager"
+          v-model="team.manager"
+          :class="{ invalid: !!error.manager }"
+          @input="isManagerValid"
+        />
+        <p class="error">{{ error.manager }}</p>
       </div>
     </template>
   </base-form>
   <section>
     <ListItems
       :items="items"
+      :fields="fields"
       @itemDeleted="deleteItem($event)"
       @itemEdited="editItem($event)"
     />
@@ -29,6 +44,15 @@ export default {
   },
   data() {
     return {
+      team: {
+        name: '',
+        manager: ''
+      },
+      error: {
+        name: '',
+        manager: ''
+      },
+      fields: ['Name', 'Manager', 'Date'],
       items: [
         {
           field1: 'data',
@@ -54,14 +78,57 @@ export default {
     };
   },
   methods: {
+    isNameValid() {
+      this.error.name = '';
+      if (this.team.name === '') {
+        this.error.name = "Can't be empty";
+        return false;
+      }
+      return true;
+    },
+    isManagerValid() {
+      this.error.manager = '';
+      if (this.team.manager === '') {
+        this.error.manager = "Can't be empty";
+        return false;
+      }
+      return true;
+    },
+    isFormValid() {
+      const name_err = !this.isNameValid();
+      const manager_err = !this.isManagerValid();
+      if (name_err || manager_err) {
+        console.log('invalid');
+        return false;
+      }
+      return true;
+    },
+    getDate() {
+      const today = new Date();
+      let year = today.getFullYear();
+      let month = today.getMonth() + 1;
+      let day = today.getDate();
+
+      if (day < 10) day = '0' + day;
+      if (month < 10) month = '0' + month;
+
+      return day + '.' + month + '.' + year;
+    },
     createTeam() {
+      if (!this.isFormValid()) {
+        return;
+      }
+
+      this.team.date = this.getDate();
+      this.items.unshift({ ...this.team });
+
       console.log('create team');
     },
-    editItem(id) {
-      console.log(id);
+    editItem(idx) {
+      console.log(idx);
     },
-    deleteItem(id) {
-      console.log(id);
+    deleteItem(idx) {
+      this.items.splice(idx, 1);
     }
   }
 };
