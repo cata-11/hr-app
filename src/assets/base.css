@@ -62,7 +62,28 @@ input[type='date'] {
 }
 input:read-only {
   padding: 0.28rem !important;
+  cursor: default !important;
 }
 input[type='date']::-webkit-calendar-picker-indicator {
   cursor: pointer;
+}
+
+.edit-form-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(19, 19, 19, 0.9);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.edit-form {
+  width: 80rem !important;
+  background-color: var(--white);
+  padding: 1rem;
+  padding-bottom: 2rem;
 }

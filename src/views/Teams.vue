@@ -1,29 +1,7 @@
 <template>
-  <base-form @submit.prevent="createTeam">
-    <template #header>Create a new team</template>
-    <template #body>
-      <div>
-        <input
-          type="text"
-          placeholder="Name"
-          v-model="team.name"
-          :class="{ invalid: !!error.name }"
-          @input="isNameValid"
-        />
-        <p class="error">{{ error.name }}</p>
-      </div>
-      <div>
-        <input
-          type="text"
-          placeholder="Manager"
-          v-model="team.manager"
-          :class="{ invalid: !!error.manager }"
-          @input="isManagerValid"
-        />
-        <p class="error">{{ error.manager }}</p>
-      </div>
-    </template>
-  </base-form>
+  <section>
+    <TeamForm @teamCreated="addTeam($event)" mode="create" />
+  </section>
   <section>
     <ListItems
       :items="items"
@@ -32,103 +10,81 @@
       @itemEdited="editItem($event)"
     />
   </section>
+  <Teleport to="#app">
+    <section class="edit-form-container" v-if="isEditMode">
+      <TeamForm
+        class="edit-form"
+        mode="edit"
+        :teamData="teamToEdit"
+        :teamIdx="teamToEditIdx"
+        @teamEdited="changeTeam($event)"
+        @modalClosed="closeModal"
+      />
+    </section>
+  </Teleport>
 </template>
 
 <script>
-import BaseForm from '../components/base/BaseForm.vue';
-import ListItems from '../components/list/ListItems.vue';
+import TeamForm from '../components/forms/TeamForm.vue';
+import ListItems from '../components/items/ListItems.vue';
 export default {
   components: {
-    BaseForm,
-    ListItems
+    ListItems,
+    TeamForm
   },
   data() {
     return {
-      team: {
-        name: '',
-        manager: ''
-      },
-      error: {
-        name: '',
-        manager: ''
-      },
+      isEditMode: false,
+      teamToEdit: {},
+      teamToEditIdx: null,
       fields: ['Name', 'Manager', 'Date'],
       items: [
         {
-          field1: 'data',
-          field2: 'data',
-          field3: 'data'
+          name: 'team 1',
+          manager: 'manager 1',
+          date: '5-Apr-2020'
         },
         {
-          field1: 'data',
-          field2: 'data',
-          field3: 'data'
+          name: 'team 2',
+          manager: 'manager 2',
+          date: '5-Apr-2020'
         },
         {
-          field1: 'data',
-          field2: 'data',
-          field3: 'data'
-        },
-        {
-          field1: 'data',
-          field2: 'data',
-          field3: 'data'
+          name: 'team 3',
+          manager: 'manager 3',
+          date: '5-Apr-2020'
         }
       ]
     };
   },
   methods: {
-    isNameValid() {
-      this.error.name = '';
-      if (this.team.name === '') {
-        this.error.name = "Can't be empty";
-        return false;
+    addTeam(item) {
+      console.log(item);
+      this.items.unshift(item);
+    },
+    changeTeam(item) {
+      if (item.isChanged) {
+        console.log('update data');
+        console.log('data: ', item.data);
+        console.log('idx', item.idx);
+        this.items[item.idx] = { ...item.data };
+      } else {
+        console.log('no changes were made');
       }
-      return true;
-    },
-    isManagerValid() {
-      this.error.manager = '';
-      if (this.team.manager === '') {
-        this.error.manager = "Can't be empty";
-        return false;
-      }
-      return true;
-    },
-    isFormValid() {
-      const name_err = !this.isNameValid();
-      const manager_err = !this.isManagerValid();
-      if (name_err || manager_err) {
-        console.log('invalid');
-        return false;
-      }
-      return true;
-    },
-    getDate() {
-      const today = new Date();
-      let year = today.getFullYear();
-      let month = today.getMonth() + 1;
-      let day = today.getDate();
-
-      if (day < 10) day = '0' + day;
-      if (month < 10) month = '0' + month;
-
-      return day + '.' + month + '.' + year;
-    },
-    createTeam() {
-      if (!this.isFormValid()) {
-        return;
-      }
-
-      this.team.date = this.getDate();
-      this.items.unshift({ ...this.team });
-
-      console.log('create team');
-    },
-    editItem(idx) {
-      console.log(idx);
+      this.isEditMode = false;
     },
     deleteItem(idx) {
       this.items.splice(idx, 1);
+    },
+    editItem(idx) {
+      this.teamToEdit = { ...this.items[idx] };
+      this.teamToEditIdx = idx;
+      this.isEditMode = true;
+
+      console.log(idx);
+    },
+    closeModal() {
+      this.isEditMode = false;
     }
   }
 };
