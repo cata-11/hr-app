@@ -59,17 +59,13 @@ export default {
   },
   methods: {
     addTeam(item) {
-      console.log(item);
       this.items.unshift(item);
     },
     changeTeam(item) {
       if (item.isChanged) {
-        console.log('update data');
-        console.log('data: ', item.data);
-        console.log('idx', item.idx);
         this.items[item.idx] = { ...item.data };
       } else {
-        console.log('no changes were made');
+        //
       }
       this.isEditMode = false;
     },
@@ -81,7 +77,7 @@ export default {
       this.teamToEditIdx = idx;
       this.isEditMode = true;
 
-      console.log(idx);
+      idx;
     },
     closeModal() {
       this.isEditMode = false;
@@ -96,5 +92,11 @@ export default {
 }
 :deep(.data-field) {
   width: calc((80% / 3));
+}
+
+@media only screen and (max-width: 768px) {
+  :deep(.data-value) {
+    width: 100%;
+  }
 }
 </style>

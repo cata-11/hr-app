@@ -74,7 +74,7 @@ export default {
       const name_err = !this.isNameValid();
       const manager_err = !this.isManagerValid();
       if (name_err || manager_err) {
-        console.log('invalid');
+        ('invalid');
         return false;
       }
       return true;
@@ -84,7 +84,7 @@ export default {
       this.$emit('team-created', { ...this.team });
 
       for (const key in this.team) {
-        this.tesm[key] = '';
+        this.team[key] = '';
       }
     },
     editTeam() {
@@ -101,9 +101,8 @@ export default {
       }
       if (isChanged) {
         editedData.date = getDate();
-        console.log('changed to: ', editedData);
       } else if (!isChanged) {
-        console.log('not changed');
+        //
       }
 
       this.$emit('team-edited', {
@@ -125,7 +124,6 @@ export default {
   },
   mounted() {
     if (this.mode === 'edit') {
-      console.log('editing..');
       this.team = { ...this.teamData };
     }
   }

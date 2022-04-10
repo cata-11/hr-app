@@ -13,7 +13,7 @@ export default {
 <style scoped>
 button {
   padding: 0.5rem 1rem;
-  font-size: 1.25rem;
+  font-size: var(--font-size);
   transition: all 0.2s ease-in-out;
   display: flex;
   align-items: center;
@@ -32,5 +32,12 @@ button:hover {
 .yellow {
   background-color: var(--yellow);
   color: var(--black);
+}
+
+@media only screen and (max-width: 512px) {
+  button {
+    padding: 0.25rem 0.5rem;
+    font-size: calc(var(--font-size) - 0.15rem);
+  }
 }
 </style>

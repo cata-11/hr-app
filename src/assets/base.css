@@ -5,6 +5,7 @@
   --grey: #ebebeb;
   --black: #131313;
   --white: #ffffff;
+  --font-size: 1.25rem;
 }
 
 body {
@@ -25,6 +26,7 @@ a {
 }
 p {
   margin: 0;
+  margin-block-end: 0;
 }
 button {
   outline: none;
@@ -42,7 +44,7 @@ select {
   outline: none;
   border: 1px solid var(--black);
   background: none;
-  font-size: unset;
+  font-size: calc(var(--font-size) - 0.25rem);
   font-weight: unset;
   font-family: Avenir, Helvetica, Arial, sans-serif;
   box-sizing: border-box;
@@ -82,8 +84,31 @@ input[type='date']::-webkit-calendar-picker-indicator {
 }
 
 .edit-form {
-  width: 80rem !important;
+  max-width: 80rem;
   background-color: var(--white);
   padding: 1rem;
-  padding-bottom: 2rem;
+}
+
+@media only screen and (max-width: 1360px) {
+  .edit-form {
+    max-width: 90%;
+  }
+}
+
+@media only screen and (max-width: 1024px) {
+  :root {
+    --font-size: 1rem;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  :root {
+    --font-size: 1.25rem;
+  }
+}
+
+@media only screen and (max-width: 414px) {
+  :root {
+    --font-size: 1rem;
+  }
 }

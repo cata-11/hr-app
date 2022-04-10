@@ -43,23 +43,27 @@ export default {
         {
           name: 'role 1',
           date: '25-Apr-2022'
+        },
+        {
+          name: 'role 2',
+          date: '25-Nov-2022'
+        },
+        {
+          name: 'role 3',
+          date: '25-Mar-2022'
         }
       ]
     };
   },
   methods: {
     addRole(item) {
-      console.log(item);
       this.items.unshift(item);
     },
     changeRole(item) {
       if (item.isChanged) {
-        console.log('update data');
-        console.log('data: ', item.data);
-        console.log('idx', item.idx);
         this.items[item.idx] = { ...item.data };
       } else {
-        console.log('no changes were made');
+        //
       }
       this.isEditMode = false;
     },
@@ -71,10 +75,9 @@ export default {
       this.roleToEditIdx = idx;
       this.isEditMode = true;
 
-      console.log(idx);
+      idx;
     },
     closeModal() {
-      console.log('close');
       this.isEditMode = false;
     }
   }
@@ -87,5 +90,11 @@ export default {
 }
 :deep(.data-field) {
   width: calc((80% / 2));
+}
+
+@media only screen and (max-width: 768px) {
+  :deep(.data-value) {
+    width: 100%;
+  }
 }
 </style>

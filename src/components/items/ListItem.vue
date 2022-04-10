@@ -1,8 +1,11 @@
 <template>
   <li>
     <div class="data">
-      <div v-for="data in this.item" :key="data" class="data-value">
-        {{ data }}
+      <div v-for="(data, key) in item" :key="data" class="data-value">
+        <div class="inline-field">
+          {{ key.charAt(0).toUpperCase() + key.slice(1).toLowerCase() }}
+        </div>
+        <div class="inline-value">{{ data }}</div>
       </div>
     </div>
     <div class="btns">
@@ -15,7 +18,7 @@
 <script>
 import BaseButton from '../base/BaseButton.vue';
 export default {
-  props: ['item', 'idx'],
+  props: ['item', 'idx', 'fields'],
   emits: ['item-edited', 'item-deleted'],
   components: {
     BaseButton
@@ -35,6 +38,7 @@ export default {
 li {
   display: flex;
   padding: 0.5rem 1rem;
+  padding-right: 0;
   box-sizing: border-box;
 }
 li div {
@@ -48,6 +52,7 @@ li div {
 }
 .data-value {
   word-wrap: break-word;
+  font-size: calc(var(--font-size) - 0.25rem);
 }
 .btns {
   width: 20%;
@@ -57,5 +62,48 @@ li div {
 }
 .btns * {
   width: 40%;
+}
+
+.inline-field {
+  font-size: var(--font-size);
+  display: none;
+}
+
+@media only screen and (max-width: 768px) {
+  li {
+    flex-direction: column;
+    padding: 0.5rem;
+    border: 1px solid var(--blue);
+    margin-bottom: 1rem;
+  }
+  .inline-field {
+    display: block;
+    width: 30%;
+  }
+  .inline-value {
+    width: 70%;
+  }
+  .data {
+    width: 100%;
+    flex-direction: column;
+  }
+  .data-value {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    min-height: 2rem;
+    border-bottom: 1px solid var(--blue);
+  }
+  .btns {
+    width: 60%;
+    padding: 0;
+    margin-top: 0.5rem;
+    margin-left: auto;
+    margin-right: 0;
+    justify-content: flex-end;
+  }
+  .btns > button {
+    margin-left: 0.5rem;
+  }
 }
 </style>

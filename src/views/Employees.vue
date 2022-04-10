@@ -40,7 +40,7 @@ export default {
       fields: [
         'Name',
         'Surname',
-        'Birth date',
+        'Birthdate',
         'Email',
         'Role',
         'Team',
@@ -49,29 +49,43 @@ export default {
       items: [
         {
           name: 'employee1',
-          surname: 'surname',
+          surname: 'surname1',
           birthDate: '25-Apr-2000',
           email: 'employee@mail.com',
           role: 'role 2',
           team: 'team 3',
           manager: 'manager1'
+        },
+        {
+          name: 'employee2',
+          surname: 'surname2',
+          birthDate: '22-Apr-2000',
+          email: 'employee2@mail.com',
+          role: 'role 2',
+          team: 'team 1',
+          manager: 'manager2'
+        },
+        {
+          name: 'employee3',
+          surname: 'surname3',
+          birthDate: '22-Oct-2000',
+          email: 'employee3@mail.com',
+          role: 'role 2',
+          team: 'team 1',
+          manager: 'manager2'
         }
       ]
     };
   },
   methods: {
     addEmployee(item) {
-      console.log(item);
       this.items.unshift(item);
     },
     changeEmployee(item) {
       if (item.isChanged) {
-        console.log('update data');
-        console.log('data: ', item.data);
-        console.log('idx', item.idx);
         this.items[item.idx] = { ...item.data };
       } else {
-        console.log('no changes were made');
+        //
       }
       this.isEditMode = false;
     },
@@ -82,10 +96,9 @@ export default {
       this.isEditMode = true;
       this.employeeToEdit = { ...this.items[idx] };
       this.employeeToEditIdx = idx;
-      console.log(idx);
+      idx;
     },
     closeModal() {
-      console.log('close');
       this.isEditMode = false;
     }
   }
@@ -98,5 +111,11 @@ export default {
 }
 :deep(.data-field) {
   width: calc((80% / 7));
+}
+
+@media only screen and (max-width: 768px) {
+  :deep(.data-value) {
+    width: 100%;
+  }
 }
 </style>

@@ -171,15 +171,12 @@ export default {
         role_err ||
         team_err
       ) {
-        console.log('invalid');
         return false;
       } else {
-        console.log('valid');
         return true;
       }
     },
     createEmployee() {
-      console.log('create employee');
       this.$emit('employee-created', { ...this.employee });
 
       for (const key in this.employee) {
@@ -202,9 +199,8 @@ export default {
 
       if (isChanged) {
         editedData.birthDate = this.employeeData.birthDate;
-        console.log('changed to: ', editedData);
       } else if (!isChanged) {
-        console.log('not changed');
+        //
       }
 
       this.$emit('employee-edited', {
@@ -226,14 +222,10 @@ export default {
   },
   mounted() {
     if (this.mode === 'edit') {
-      console.log('editing..');
       this.employee = { ...this.employeeData };
-
       this.employee.birthDate = new Date(this.employee.birthDate)
         .toISOString()
         .substring(0, 10);
-
-      console.log(this.employee);
     }
   }
 };

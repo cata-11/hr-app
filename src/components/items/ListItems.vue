@@ -1,13 +1,13 @@
 <template>
   <ul v-if="items.length > 0">
     <li class="fields">
-      <div v-for="field in this.fields" :key="field" class="data-field">
+      <div v-for="field in fields" :key="field" class="data-field">
         {{ field }}
       </div>
     </li>
     <TransitionGroup name="list">
       <ListItem
-        v-for="(item, idx) in this.items"
+        v-for="(item, idx) in items"
         :key="item"
         :item="item"
         :idx="idx"
@@ -39,17 +39,15 @@ export default {
 </script>
 
 <style scoped>
-ul {
-  margin-top: 1rem;
-}
 .fields {
   display: flex;
   justify-content: space-between;
   width: 80%;
   font-weight: bold;
-  font-size: 1.5rem;
+  font-size: var(--font-size);
   margin-bottom: 0.5rem;
   padding: 0.5rem 1rem;
+  padding-right: 0;
   box-sizing: border-box;
 }
 li {
@@ -76,5 +74,19 @@ p {
 .list-leave-active {
   position: absolute;
   width: 80rem;
+}
+
+@media only screen and (max-width: 768px) {
+  .fields {
+    display: none;
+  }
+  ul {
+    width: 90%;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+  li:nth-of-type(even) {
+    background-color: var(--white);
+  }
 }
 </style>

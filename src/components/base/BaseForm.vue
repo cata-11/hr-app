@@ -35,16 +35,17 @@ export default {
 form {
   width: 97.5%;
   margin: 0 auto;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
   position: relative;
 }
 header {
   display: flex;
   align-items: center;
-  margin-bottom: 1rem;
 }
 h2 {
-  margin-right: 1.5rem;
-  font-size: 1.25rem;
+  margin-right: 0.75rem;
+  font-size: calc(var(--font-size) + 0.15rem);
 }
 .wrapper {
   display: flex;
@@ -90,5 +91,32 @@ h2 {
 }
 .close-btn:hover {
   filter: brightness(90%);
+}
+@media only screen and (max-width: 512px) {
+  .close-btn {
+    width: 1rem;
+    height: 1rem;
+    background-size: 1rem;
+    padding: 0.15rem;
+    right: 0.25rem;
+    top: 0.25rem;
+  }
+  h2 {
+    font-size: var(--font-size);
+  }
+}
+
+@media only screen and (max-width: 345px) {
+  .close-btn {
+    width: 1rem;
+    height: 1rem;
+    background-size: 1rem;
+    padding: 0.15rem;
+    right: 0.25rem;
+    top: 0.25rem;
+  }
+  h2 {
+    font-size: calc(var(--font-size) - 0.15rem);
+  }
 }
 </style>

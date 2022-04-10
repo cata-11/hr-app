@@ -20,6 +20,7 @@ nav {
   color: var(--white);
   max-width: 80rem;
   margin: 1rem auto;
+  margin-bottom: 0;
 }
 
 ul {
@@ -46,5 +47,14 @@ li {
 a:hover {
   background-color: var(--yellow);
   color: var(--black);
+}
+
+@media only screen and (max-width: 1280px) {
+  nav {
+    margin-top: 0;
+  }
+  ul {
+    width: 100%;
+  }
 }
 </style>

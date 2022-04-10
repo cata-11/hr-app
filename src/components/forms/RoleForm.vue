@@ -48,7 +48,6 @@ export default {
     isFormValid() {
       const role_err = !this.isNameValid();
       if (role_err) {
-        console.log('invalid');
         return false;
       }
       return true;
@@ -76,9 +75,8 @@ export default {
 
       if (isChanged) {
         editedData.date = getDate();
-        console.log('changed to: ', editedData);
       } else if (!isChanged) {
-        console.log('not changed');
+        //
       }
 
       this.$emit('role-edited', {
@@ -100,7 +98,6 @@ export default {
   },
   mounted() {
     if (this.mode === 'edit') {
-      console.log('editing..');
       this.role = { ...this.roleData };
     }
   }
