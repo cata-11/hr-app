@@ -18,7 +18,7 @@
 <script>
 import BaseButton from '../base/BaseButton.vue';
 export default {
-  props: ['item', 'idx', 'fields'],
+  props: ['item', 'idx'],
   emits: ['item-edited', 'item-deleted'],
   components: {
     BaseButton

@@ -5,7 +5,6 @@
   <section>
     <ListItems
       :items="items"
-      :fields="fields"
       @itemDeleted="deleteItem($event)"
       @itemEdited="editItem($event)"
     />
@@ -37,49 +36,44 @@ export default {
       isEditMode: false,
       employeeToEdit: {},
       employeeToEditIdx: null,
-      fields: [
-        'Name',
-        'Surname',
-        'Birthdate',
-        'Email',
-        'Role',
-        'Team',
-        'Manager'
-      ],
-      items: [
-        {
-          name: 'employee1',
-          surname: 'surname1',
-          birthDate: '25-Apr-2000',
-          email: 'employee@mail.com',
-          role: 'role 2',
-          team: 'team 3',
-          manager: 'manager1'
-        },
-        {
-          name: 'employee2',
-          surname: 'surname2',
-          birthDate: '22-Apr-2000',
-          email: 'employee2@mail.com',
-          role: 'role 2',
-          team: 'team 1',
-          manager: 'manager2'
-        },
-        {
-          name: 'employee3',
-          surname: 'surname3',
-          birthDate: '22-Oct-2000',
-          email: 'employee3@mail.com',
-          role: 'role 2',
-          team: 'team 1',
-          manager: 'manager2'
-        }
-      ]
+      items: []
     };
   },
   methods: {
     addEmployee(item) {
-      this.items.unshift(item);
+      fetch('http://localhost:8000/employee', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: item.name,
+          surname: item.surname,
+          birthdate: item.birthdate,
+          email: item.email,
+          role: item.role,
+          team: item.team,
+          manager: 'auto_assigned_by_team'
+        })
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((res) => {
+          const data = res.employee;
+          const item = {
+            _id: data._id,
+            name: data.name,
+            surname: data.surname,
+            birthdate: data.birthdate,
+            email: data.email,
+            role: data.role,
+            team: data.team,
+            manager: data.manager
+          };
+          this.items.unshift(item);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
     changeEmployee(item) {
       if (item.isChanged) {
@@ -90,17 +84,35 @@ export default {
       this.isEditMode = false;
     },
     deleteItem(idx) {
+      console.log(this.items[idx]);
       this.items.splice(idx, 1);
     },
     editItem(idx) {
       this.isEditMode = true;
       this.employeeToEdit = { ...this.items[idx] };
       this.employeeToEditIdx = idx;
-      idx;
     },
     closeModal() {
       this.isEditMode = false;
+    },
+    fetchItems() {
+      console.log('fetching...');
+      fetch('http://localhost:8000/employees', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((res) => {
+          this.items = [...res.employees];
+          // this.formatItems();
+        })
+        .catch((err) => console.log(err));
     }
+  },
+  mounted() {
+    this.fetchItems();
   }
 };
 </script>

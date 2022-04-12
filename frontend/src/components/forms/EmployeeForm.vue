@@ -20,11 +20,11 @@
           :readonly="mode === 'edit' ? true : false"
           type="date"
           placeholder="Birthdate"
-          v-model="employee.birthDate"
-          :class="{ invalid: !!error.birthDate }"
+          v-model="employee.birthdate"
+          :class="{ invalid: !!error.birthdate }"
           @input="isDateSelected"
         />
-        <p class="error">{{ error.birthDate }}</p>
+        <p class="error">{{ error.birthdate }}</p>
       </div>
       <div>
         <input
@@ -85,7 +85,7 @@ export default {
       employee: {
         name: '',
         surname: '',
-        birthDate: '',
+        birthdate: '',
         email: '',
         role: '',
         team: '',
@@ -94,7 +94,7 @@ export default {
       error: {
         name: '',
         surname: '',
-        birthDate: '',
+        birthdate: '',
         email: '',
         role: '',
         team: '',
@@ -147,9 +147,9 @@ export default {
       return true;
     },
     isDateSelected() {
-      this.error.birthDate = '';
-      if (this.employee.birthDate === '') {
-        this.error.birthDate = 'Not selected';
+      this.error.birthdate = '';
+      if (this.employee.birthdate === '') {
+        this.error.birthdate = 'Not selected';
         return false;
       }
       return true;
@@ -185,7 +185,7 @@ export default {
     },
     editEmployee() {
       const initialData = { ...this.employeeData };
-      initialData.birthDate = this.employee.birthDate;
+      initialData.birthdate = this.employee.birthdate;
       const editedData = { ...this.employee };
 
       let isChanged = false;
@@ -198,7 +198,7 @@ export default {
       }
 
       if (isChanged) {
-        editedData.birthDate = this.employeeData.birthDate;
+        editedData.birthdate = this.employeeData.birthdate;
       } else if (!isChanged) {
         //
       }
@@ -223,7 +223,7 @@ export default {
   mounted() {
     if (this.mode === 'edit') {
       this.employee = { ...this.employeeData };
-      this.employee.birthDate = new Date(this.employee.birthDate)
+      this.employee.birthdate = new Date(this.employee.birthdate)
         .toISOString()
         .substring(0, 10);
     }

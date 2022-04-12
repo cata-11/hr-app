@@ -1,8 +1,8 @@
 <template>
   <ul v-if="items.length > 0">
     <li class="fields">
-      <div v-for="field in fields" :key="field" class="data-field">
-        {{ field }}
+      <div v-for="field in itemFields" :key="field" class="data-field">
+        <span>{{ field }}</span>
       </div>
     </li>
     <TransitionGroup name="list">
@@ -22,10 +22,17 @@
 <script>
 import ListItem from './ListItem.vue';
 export default {
-  props: ['items', 'fields'],
+  props: ['items'],
   emits: ['item-edited', 'item-deleted'],
   components: {
     ListItem
+  },
+  computed: {
+    itemFields() {
+      return Object.keys(this.items[0]).map(
+        (key) => key.charAt(0).toUpperCase() + key.slice(1).toLowerCase()
+      );
+    }
   },
   methods: {
     editItem(idx) {
