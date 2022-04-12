@@ -19,7 +19,7 @@
         <input
           :readonly="mode === 'edit' ? true : false"
           type="date"
-          placeholder="Birth date"
+          placeholder="Birthdate"
           v-model="employee.birthDate"
           :class="{ invalid: !!error.birthDate }"
           @input="isDateSelected"
