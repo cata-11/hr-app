@@ -28,7 +28,39 @@ exports.createEmployee = (req, res, next) => {
         employee: result
       });
     })
-    .catch((err) => {
-      console.log(err);
-    });
+    .catch((err) => console.log(err));
+};
+
+exports.deleteEmployee = (req, res, next) => {
+  const id = req.params.id;
+  Employee.findByIdAndDelete(id)
+    .then(() => {
+      res.status(200).json({
+        msg: 'Employee deleted succesfully !'
+      });
+    })
+    .catch(() => console.log(err));
+};
+
+exports.editEmployee = (req, res, next) => {
+  const id = req.params.id;
+  Employee.findByIdAndUpdate(
+    id,
+    {
+      name: req.body.name,
+      surname: req.body.surname,
+      email: req.body.email,
+      team: req.body.team,
+      role: req.body.role,
+      manager: 'reasigned_maybe'
+    },
+    { new: true }
+  )
+    .then((result) => {
+      res.status(200).json({
+        msg: 'Employee edited succesfully !',
+        employee: result
+      });
+    })
+    .catch((err) => console.log(err));
 };

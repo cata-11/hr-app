@@ -87,15 +87,46 @@ export default {
     },
     changeEmployee(item) {
       if (item.isChanged) {
-        this.items[item.idx] = { ...item.data };
+        const data = item.data;
+        const id = data._id;
+        fetch('http://localhost:8000/employee/' + id, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: data.name,
+            surname: data.surname,
+            email: data.email,
+            role: data.role,
+            team: data.team
+          })
+        })
+          .then((res) => {
+            return res.json();
+          })
+          .then((res) => {
+            this.items[item.idx] = { ...res.employee };
+          })
+          .catch((err) => console.log(err));
       } else {
         //
       }
       this.isEditMode = false;
     },
     deleteItem(idx) {
-      console.log(this.items[idx]);
-      this.items.splice(idx, 1);
+      const id = this.items[idx]._id;
+      fetch('http://localhost:8000/employee/' + id, {
+        method: 'DELETE'
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((res) => {
+          console.log(res);
+          this.items.splice(idx, 1);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
     editItem(idx) {
       this.isEditMode = true;
@@ -115,8 +146,7 @@ export default {
           return res.json();
         })
         .then((res) => {
-          this.items = [...res.employees];
-          // this.formatItems();
+          this.items = [...res.employees].reverse();
         })
         .catch((err) => console.log(err));
     }
