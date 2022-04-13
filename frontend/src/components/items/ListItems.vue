@@ -1,12 +1,13 @@
 <template>
   <ul v-if="items.length > 0">
     <li class="fields">
-      <div v-for="field in itemFields" :key="field" class="data-field">
-        <span>{{ field }}</span>
+      <div v-for="field in fields" :key="field" class="data-field">
+        {{ field }}
       </div>
     </li>
     <TransitionGroup name="list">
       <ListItem
+        :fields="fields"
         v-for="(item, idx) in items"
         :key="item"
         :item="item"
@@ -22,18 +23,21 @@
 <script>
 import ListItem from './ListItem.vue';
 export default {
-  props: ['items'],
+  props: ['items', 'fields'],
   emits: ['item-edited', 'item-deleted'],
   components: {
     ListItem
   },
-  computed: {
-    itemFields() {
-      return Object.keys(this.items[0]).map(
-        (key) => key.charAt(0).toUpperCase() + key.slice(1).toLowerCase()
-      );
-    }
-  },
+  // computed: {
+  //   fields() {
+  //     const keys = Object.keys({ ...this.items[0] }).filter(
+  //       (key) => key !== '_id' && key !== '__v'
+  //     );
+  //     return keys.map(
+  //       (key) => key.charAt(0).toUpperCase() + key.slice(1).toLowerCase()
+  //     );
+  //   }
+  // },
   methods: {
     editItem(idx) {
       this.$emit('item-edited', idx);

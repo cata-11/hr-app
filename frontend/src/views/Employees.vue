@@ -5,6 +5,7 @@
   <section>
     <ListItems
       :items="items"
+      :fields="fields"
       @itemDeleted="deleteItem($event)"
       @itemEdited="editItem($event)"
     />
@@ -36,7 +37,16 @@ export default {
       isEditMode: false,
       employeeToEdit: {},
       employeeToEditIdx: null,
-      items: []
+      items: [],
+      fields: [
+        'Name',
+        'Surname',
+        'Birthdate',
+        'Email',
+        'Role',
+        'Team',
+        'Manager'
+      ]
     };
   },
   methods: {

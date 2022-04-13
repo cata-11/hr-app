@@ -1,9 +1,9 @@
 <template>
   <li>
     <div class="data">
-      <div v-for="(data, key) in item" :key="data" class="data-value">
+      <div v-for="(data, _, idx) of itemData" :key="data" class="data-value">
         <div class="inline-field">
-          {{ key.charAt(0).toUpperCase() + key.slice(1).toLowerCase() }}
+          {{ fields[idx] }}
         </div>
         <div class="inline-value">{{ data }}</div>
       </div>
@@ -18,7 +18,7 @@
 <script>
 import BaseButton from '../base/BaseButton.vue';
 export default {
-  props: ['item', 'idx'],
+  props: ['item', 'idx', 'fields'],
   emits: ['item-edited', 'item-deleted'],
   components: {
     BaseButton
@@ -29,6 +29,14 @@ export default {
     },
     deleteItem() {
       this.$emit('item-deleted', this.idx);
+    }
+  },
+  computed: {
+    itemData() {
+      const formatedItem = { ...this.item };
+      delete formatedItem._id;
+      delete formatedItem.__v;
+      return formatedItem;
     }
   }
 };
