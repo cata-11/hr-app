@@ -1,12 +1,11 @@
-import { createStore } from 'vuex'
+import { createStore } from 'vuex';
+
+import loaderModule from './loader/index.js';
+import dialogModule from './dialog/index.js';
 
 export default createStore({
-  state: {
-  },
-  mutations: {
-  },
-  actions: {
-  },
   modules: {
+    loader: loaderModule,
+    dialog: dialogModule
   }
-})
+});

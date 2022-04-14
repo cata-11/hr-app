@@ -4,6 +4,7 @@
     <router-view />
   </main>
   <!-- <TheFooter /> -->
+  <TheDialog />
 </template>
 
 <script>

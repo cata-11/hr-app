@@ -1,6 +1,11 @@
 <template>
-  <ul v-if="items.length > 0">
-    <li class="fields">
+  <ul
+    v-if="
+      (isLoading && (type === 'delete' || type === 'add' || type === 'edit')) ||
+      (!isLoading && items.length > 0)
+    "
+  >
+    <li class="fields" v-if="items.length > 0">
       <div v-for="field in fields" :key="field" class="data-field">
         {{ field }}
       </div>
@@ -17,7 +22,12 @@
       />
     </TransitionGroup>
   </ul>
-  <p v-else>No data found</p>
+  <p v-else-if="!isLoading && items.length === 0">No data found.</p>
+  <TheLoader
+    v-if="
+      isLoading && (type === 'delete' || type === 'add' || type === 'fetch')
+    "
+  />
 </template>
 
 <script>
@@ -28,16 +38,14 @@ export default {
   components: {
     ListItem
   },
-  // computed: {
-  //   fields() {
-  //     const keys = Object.keys({ ...this.items[0] }).filter(
-  //       (key) => key !== '_id' && key !== '__v'
-  //     );
-  //     return keys.map(
-  //       (key) => key.charAt(0).toUpperCase() + key.slice(1).toLowerCase()
-  //     );
-  //   }
-  // },
+  computed: {
+    isLoading() {
+      return this.$store.getters['loader/isLoading'];
+    },
+    type() {
+      return this.$store.getters['loader/type'];
+    }
+  },
   methods: {
     editItem(idx) {
       this.$emit('item-edited', idx);

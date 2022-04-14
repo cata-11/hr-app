@@ -176,12 +176,16 @@ export default {
         return true;
       }
     },
-    createEmployee() {
-      this.$emit('employee-created', { ...this.employee });
-
+    resetForm() {
       for (const key in this.employee) {
         this.employee[key] = '';
       }
+      for (const key in this.error) {
+        this.employee[key] = '';
+      }
+    },
+    createEmployee() {
+      this.$emit('employee-created', { ...this.employee });
     },
     editEmployee() {
       const initialData = { ...this.employeeData };
@@ -196,13 +200,12 @@ export default {
           break;
         }
       }
-
-      if (isChanged) {
-        editedData.birthdate = this.employeeData.birthdate;
-      } else if (!isChanged) {
-        //
+      if (!isChanged) {
+        this.$emit('modal-closed');
+        return;
       }
 
+      editedData.birthdate = this.employeeData.birthdate;
       this.$emit('employee-edited', {
         isChanged: isChanged,
         idx: this.employeeIdx,
@@ -218,6 +221,7 @@ export default {
     },
     closeModal() {
       this.$emit('modal-closed');
+      this.resetForm();
     }
   },
   mounted() {

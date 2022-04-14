@@ -2,7 +2,7 @@
   <section>
     <EmployeeForm @employeeCreated="addEmployee($event)" mode="create" />
   </section>
-  <section>
+  <section class="list-container">
     <ListItems
       :items="items"
       :fields="fields"
@@ -34,6 +34,7 @@ export default {
   },
   data() {
     return {
+      isLoading: false,
       isEditMode: false,
       employeeToEdit: {},
       employeeToEditIdx: null,
@@ -51,6 +52,7 @@ export default {
   },
   methods: {
     addEmployee(item) {
+      this.$store.dispatch('loader/toggle', { type: 'add' });
       fetch('http://localhost:8000/employee', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -79,53 +81,73 @@ export default {
             team: data.team,
             manager: data.manager
           };
+          this.$store.dispatch('loader/toggle');
           this.items.unshift(item);
         })
-        .catch((err) => {
-          console.log(err);
+        .catch(() => {
+          this.$store.dispatch('loader/toggle');
+          this.$store.dispatch('dialog/open', {
+            type: 'error',
+            message: 'Failed to create employee. Try again later.'
+          });
         });
     },
     changeEmployee(item) {
-      if (item.isChanged) {
-        const data = item.data;
-        const id = data._id;
-        fetch('http://localhost:8000/employee/' + id, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: data.name,
-            surname: data.surname,
-            email: data.email,
-            role: data.role,
-            team: data.team
-          })
-        })
-          .then((res) => {
-            return res.json();
-          })
-          .then((res) => {
-            this.items[item.idx] = { ...res.employee };
-          })
-          .catch((err) => console.log(err));
-      } else {
-        //
+      if (!item.isChanged) {
+        this.isEditMode = false;
+        return;
       }
-      this.isEditMode = false;
+
+      const data = item.data;
+      const id = data._id;
+
+      this.$store.dispatch('loader/toggle', { type: 'edit' });
+
+      fetch('http://localhost:8000/employee/' + id, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: data.name,
+          surname: data.surname,
+          email: data.email,
+          role: data.role,
+          team: data.team
+        })
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((res) => {
+          this.$store.dispatch('loader/toggle');
+          this.isEditMode = false;
+          this.items[item.idx] = { ...res.employee };
+        })
+        .catch(() => {
+          this.isEditMode = false;
+          this.$store.dispatch('dialog/open', {
+            type: 'error',
+            message: 'Failed to edit employee. Try again later.'
+          });
+        });
     },
     deleteItem(idx) {
       const id = this.items[idx]._id;
+      this.$store.dispatch('loader/toggle', { type: 'delete' });
       fetch('http://localhost:8000/employee/' + id, {
         method: 'DELETE'
       })
         .then((res) => {
           return res.json();
         })
-        .then((res) => {
-          console.log(res);
+        .then(() => {
           this.items.splice(idx, 1);
+          this.$store.dispatch('loader/toggle');
         })
-        .catch((err) => {
-          console.log(err);
+        .catch(() => {
+          this.$store.dispatch('dialog/open', {
+            type: 'error',
+            message: 'Failed to delete employee. Try again later.'
+          });
         });
     },
     editItem(idx) {
@@ -137,7 +159,7 @@ export default {
       this.isEditMode = false;
     },
     fetchItems() {
-      console.log('fetching...');
+      this.$store.dispatch('loader/toggle', { type: 'fetch' });
       fetch('http://localhost:8000/employees', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
@@ -147,8 +169,15 @@ export default {
         })
         .then((res) => {
           this.items = [...res.employees].reverse();
+          this.$store.dispatch('loader/toggle');
         })
-        .catch((err) => console.log(err));
+        .catch(() => {
+          this.$store.dispatch('loader/toggle');
+          this.$store.dispatch('dialog/open', {
+            type: 'error',
+            message: 'Failed to fetch employees. Try again later.'
+          });
+        });
     }
   },
   mounted() {
@@ -158,6 +187,9 @@ export default {
 </script>
 
 <style scoped>
+.list-container {
+  position: relative;
+}
 :deep(.data-value) {
   width: calc((80% / 7));
 }

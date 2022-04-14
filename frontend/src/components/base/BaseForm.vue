@@ -1,12 +1,13 @@
 <template>
   <form>
-    <div v-if="mode === 'edit'" class="close-btn" @click="modalClosed"></div>
+    <TheLoader v-if="isLoading && type === 'edit' && mode === 'edit'" />
+    <div v-if="mode === 'edit'" class="close-btn" @click="closeModal"></div>
     <header>
       <h2>
         <slot name="header"></slot>
       </h2>
       <base-button size="small" color="yellow">{{
-        mode === 'edit' ? 'save' : mode
+        mode === 'edit' ? 'save' : 'create'
       }}</base-button>
     </header>
     <div class="wrapper">
@@ -16,15 +17,25 @@
 </template>
 
 <script>
+import TheLoader from '../layout/TheLoader.vue';
 import BaseButton from './BaseButton.vue';
 export default {
   emits: ['modal-closed'],
   props: ['mode'],
   components: {
-    BaseButton
+    BaseButton,
+    TheLoader
+  },
+  computed: {
+    isLoading() {
+      return this.$store.getters['loader/isLoading'];
+    },
+    type() {
+      return this.$store.getters['loader/type'];
+    }
   },
   methods: {
-    modalClosed() {
+    closeModal() {
       this.$emit('modal-closed');
     }
   }
