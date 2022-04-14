@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
 const employeesRoute = require('./routes/employees');
+const teamsRoute = require('./routes/teams');
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 app.use(employeesRoute);
+app.use(teamsRoute);
 
 app.use((err, req, res, next) => {
   res.status(500).json({ message: err.message });

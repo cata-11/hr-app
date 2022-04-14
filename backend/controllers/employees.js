@@ -1,6 +1,6 @@
-const Employee = require('../models/employee');
+const Employee = require('../models/team');
 
-exports.getEmployees = (req, res, next) => {
+exports.get = (req, res, next) => {
   Employee.find()
     .then((employees) => {
       res.status(200).json({
@@ -11,7 +11,7 @@ exports.getEmployees = (req, res, next) => {
     .catch((error) => next(error));
 };
 
-exports.createEmployee = (req, res, next) => {
+exports.create = (req, res, next) => {
   const employee = new Employee({
     name: req.body.name,
     surname: req.body.surname,
@@ -33,7 +33,7 @@ exports.createEmployee = (req, res, next) => {
     .catch((error) => next(error));
 };
 
-exports.deleteEmployee = (req, res, next) => {
+exports.delete = (req, res, next) => {
   const id = req.params.id;
   Employee.findByIdAndDelete(id)
     .then(() => {
@@ -44,7 +44,7 @@ exports.deleteEmployee = (req, res, next) => {
     .catch((error) => next(error));
 };
 
-exports.editEmployee = (req, res, next) => {
+exports.edit = (req, res, next) => {
   const id = req.params.id;
   Employee.findByIdAndUpdate(
     id,
