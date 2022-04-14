@@ -4,10 +4,11 @@ exports.getEmployees = (req, res, next) => {
   Employee.find()
     .then((employees) => {
       res.status(200).json({
+        msg: 'Employees fetched succesfully !',
         employees: employees
       });
     })
-    .catch((err) => console.log(err));
+    .catch((error) => next(error));
 };
 
 exports.createEmployee = (req, res, next) => {
@@ -25,10 +26,11 @@ exports.createEmployee = (req, res, next) => {
     .save()
     .then((result) => {
       res.status(201).json({
+        msg: 'Employee created succesfully !',
         employee: result
       });
     })
-    .catch((err) => console.log(err));
+    .catch((error) => next(error));
 };
 
 exports.deleteEmployee = (req, res, next) => {
@@ -39,7 +41,7 @@ exports.deleteEmployee = (req, res, next) => {
         msg: 'Employee deleted succesfully !'
       });
     })
-    .catch(() => console.log(err));
+    .catch((error) => next(error));
 };
 
 exports.editEmployee = (req, res, next) => {
@@ -62,5 +64,5 @@ exports.editEmployee = (req, res, next) => {
         employee: result
       });
     })
-    .catch((err) => console.log(err));
+    .catch((error) => next(error));
 };

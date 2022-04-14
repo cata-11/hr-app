@@ -16,6 +16,10 @@ app.use(cors());
 
 app.use(employeesRoute);
 
+app.use((err, req, res, next) => {
+  res.status(500).json({ message: err.message });
+});
+
 mongoose
   .connect(
     'mongodb+srv://cata:Z1R6IlgfwWpN1qlM@cluster0.sgy00.mongodb.net/hrAppDb?retryWrites=true&w=majority'
@@ -26,4 +30,4 @@ mongoose
       console.log(`Server listening on port ${PORT}`);
     });
   })
-  .catch((err) => console.log(err));
+  .catch((error) => next(error));
