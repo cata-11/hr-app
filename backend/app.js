@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 
 const employeesRoutes = require('./routes/employees');
 const teamsRoutes = require('./routes/teams');
+const rolesRoutes = require('./routes/roles');
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use(cors());
 
 app.use(employeesRoutes);
 app.use(teamsRoutes);
+app.use(rolesRoutes);
 
 app.use((err, req, res, next) => {
   console.log(err);
@@ -33,4 +35,4 @@ mongoose
       console.log(`Server listening on port ${PORT}`);
     });
   })
-  .catch((error) => next(error));
+  .catch((error) => console.log(error));

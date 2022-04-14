@@ -28,7 +28,7 @@
 import TeamForm from '../components/forms/TeamForm.vue';
 import ListItems from '../components/items/ListItems.vue';
 
-import { getDate } from '../assets/base.js';
+import { getDate, getMax } from '../assets/base.js';
 
 export default {
   components: {
@@ -64,7 +64,7 @@ export default {
             id: data._id,
             name: data.name,
             manager: data.manager,
-            date: getDate(data.createdAt)
+            date: getDate(getMax(data.createdAt, data.updatedAt))
           };
           this.$store.dispatch('loader/toggle');
           this.items.unshift(item);
@@ -107,7 +107,7 @@ export default {
             id: res.team._id,
             name: res.team.name,
             manager: res.team.manager,
-            date: getDate(res.team.updatedAt)
+            date: getDate(getMax(res.team.createdAt, res.team.updatedAt))
           };
         })
         .catch(() => {
@@ -115,7 +115,7 @@ export default {
           this.$store.dispatch('loader/toggle');
           this.$store.dispatch('dialog/open', {
             type: 'error',
-            message: 'Failed to edit employee. Try again later.'
+            message: 'Failed to edit team. Try again later.'
           });
         });
     },
@@ -165,7 +165,7 @@ export default {
               id: item._id,
               name: item.name,
               manager: item.manager,
-              date: getDate(item.createdAt)
+              date: getDate(getMax(item.createdAt, item.updatedAt))
             });
           }
 

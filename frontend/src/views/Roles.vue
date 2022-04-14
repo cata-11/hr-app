@@ -28,6 +28,8 @@
 import RoleForm from '../components/forms/RoleForm.vue';
 import ListItems from '../components/items/ListItems.vue';
 
+import { getDate, getMax } from '../assets/base.js';
+
 export default {
   components: {
     RoleForm,
@@ -39,36 +41,99 @@ export default {
       roleToEdit: {},
       roleToEditIdx: null,
       fields: ['Name', 'Date'],
-      items: [
-        {
-          name: 'role 1',
-          date: '25-Apr-2022'
-        },
-        {
-          name: 'role 2',
-          date: '25-Nov-2022'
-        },
-        {
-          name: 'role 3',
-          date: '25-Mar-2022'
-        }
-      ]
+      items: []
     };
   },
   methods: {
     addRole(item) {
-      this.items.unshift(item);
+      this.$store.dispatch('loader/toggle', { type: 'add' });
+      fetch('http://localhost:8000/role', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: item.name
+        })
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((res) => {
+          const data = res.role;
+          const item = {
+            id: data._id,
+            name: data.name,
+            date: getDate(getMax(data.createdAt, data.updatedAt))
+          };
+          this.$store.dispatch('loader/toggle');
+          this.items.unshift(item);
+        })
+        .catch(() => {
+          this.$store.dispatch('loader/toggle');
+          this.$store.dispatch('dialog/open', {
+            type: 'error',
+            message: 'Failed to create role. Try again later.'
+          });
+        });
     },
     changeRole(item) {
-      if (item.isChanged) {
-        this.items[item.idx] = { ...item.data };
-      } else {
-        //
+      if (!item.isChanged) {
+        this.isEditMode = false;
+        return;
       }
-      this.isEditMode = false;
+
+      const data = item.data;
+      const id = data.id;
+
+      this.$store.dispatch('loader/toggle', { type: 'edit' });
+
+      fetch('http://localhost:8000/role/' + id, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: data.name
+        })
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((res) => {
+          this.$store.dispatch('loader/toggle');
+          this.isEditMode = false;
+
+          this.items[item.idx] = {
+            id: res.role._id,
+            name: res.role.name,
+            date: getDate(getMax(res.role.createdAt, res.role.updatedAt))
+          };
+        })
+        .catch(() => {
+          this.isEditMode = false;
+          this.$store.dispatch('loader/toggle');
+          this.$store.dispatch('dialog/open', {
+            type: 'error',
+            message: 'Failed to edit role. Try again later.'
+          });
+        });
     },
     deleteItem(idx) {
-      this.items.splice(idx, 1);
+      const id = this.items[idx].id;
+      this.$store.dispatch('loader/toggle', { type: 'delete' });
+      fetch('http://localhost:8000/role/' + id, {
+        method: 'DELETE'
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then(() => {
+          this.items.splice(idx, 1);
+          this.$store.dispatch('loader/toggle');
+        })
+        .catch(() => {
+          this.$store.dispatch('dialog/open', {
+            type: 'error',
+            message: 'Failed to delete role. Try again later.'
+          });
+        });
     },
     editItem(idx) {
       this.roleToEdit = { ...this.items[idx] };
@@ -79,7 +144,43 @@ export default {
     },
     closeModal() {
       this.isEditMode = false;
+    },
+    fetchRoles() {
+      this.$store.dispatch('loader/toggle', { type: 'fetch' });
+      fetch('http://localhost:8000/roles', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((res) => {
+          const fetchedItems = [...res.roles];
+          const temp = [];
+
+          for (const item of fetchedItems) {
+            temp.unshift({
+              id: item._id,
+              name: item.name,
+              date: getDate(getMax(item.createdAt, item.updatedAt))
+            });
+          }
+
+          this.items = [...temp];
+
+          this.$store.dispatch('loader/toggle');
+        })
+        .catch(() => {
+          this.$store.dispatch('loader/toggle');
+          this.$store.dispatch('dialog/open', {
+            type: 'error',
+            message: 'Failed to fetch roles. Try again later.'
+          });
+        });
     }
+  },
+  mounted() {
+    this.fetchRoles();
   }
 };
 </script>
