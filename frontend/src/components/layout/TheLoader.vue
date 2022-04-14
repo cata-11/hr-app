@@ -37,7 +37,7 @@ section {
   left: 0;
 }
 .lds-facebook {
-  margin: 2rem auto;
+  margin: 1rem auto;
   display: inline-block;
   position: relative;
   width: 80px;

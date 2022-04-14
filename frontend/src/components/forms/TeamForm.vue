@@ -74,7 +74,6 @@ export default {
       const name_err = !this.isNameValid();
       const manager_err = !this.isManagerValid();
       if (name_err || manager_err) {
-        ('invalid');
         return false;
       }
       return true;

@@ -1,33 +1,36 @@
 <template>
-  <ul
-    v-if="
-      (isLoading && (type === 'delete' || type === 'add' || type === 'edit')) ||
-      (!isLoading && items.length > 0)
-    "
-  >
-    <li class="fields" v-if="items.length > 0">
-      <div v-for="field in fields" :key="field" class="data-field">
-        {{ field }}
-      </div>
-    </li>
-    <TransitionGroup name="list">
-      <ListItem
-        :fields="fields"
-        v-for="(item, idx) in items"
-        :key="item"
-        :item="item"
-        :idx="idx"
-        @itemDeleted="deleteItem($event)"
-        @itemEdited="editItem($event)"
-      />
-    </TransitionGroup>
-  </ul>
-  <p v-else-if="!isLoading && items.length === 0">No data found.</p>
-  <TheLoader
-    v-if="
-      isLoading && (type === 'delete' || type === 'add' || type === 'fetch')
-    "
-  />
+  <section class="list-container">
+    <ul
+      v-if="
+        (isLoading &&
+          (type === 'delete' || type === 'add' || type === 'edit')) ||
+        (!isLoading && items.length > 0)
+      "
+    >
+      <li class="fields" v-if="items.length > 0">
+        <div v-for="field in fields" :key="field" class="data-field">
+          {{ field }}
+        </div>
+      </li>
+      <TransitionGroup name="list">
+        <ListItem
+          :fields="fields"
+          v-for="(item, idx) in items"
+          :key="item"
+          :item="item"
+          :idx="idx"
+          @itemDeleted="deleteItem($event)"
+          @itemEdited="editItem($event)"
+        />
+      </TransitionGroup>
+    </ul>
+    <p v-else-if="!isLoading && items.length === 0">No data found.</p>
+    <TheLoader
+      v-if="
+        isLoading && (type === 'delete' || type === 'add' || type === 'fetch')
+      "
+    />
+  </section>
 </template>
 
 <script>
@@ -58,6 +61,9 @@ export default {
 </script>
 
 <style scoped>
+.list-container {
+  position: relative;
+}
 .fields {
   display: flex;
   justify-content: space-between;

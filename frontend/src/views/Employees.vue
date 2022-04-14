@@ -2,14 +2,14 @@
   <section>
     <EmployeeForm @employeeCreated="addEmployee($event)" mode="create" />
   </section>
-  <section class="list-container">
-    <ListItems
-      :items="items"
-      :fields="fields"
-      @itemDeleted="deleteItem($event)"
-      @itemEdited="editItem($event)"
-    />
-  </section>
+
+  <ListItems
+    :items="items"
+    :fields="fields"
+    @itemDeleted="deleteItem($event)"
+    @itemEdited="editItem($event)"
+  />
+
   <Teleport to="#app">
     <section class="edit-form-container" v-if="isEditMode">
       <EmployeeForm
@@ -27,6 +27,9 @@
 <script>
 import EmployeeForm from '../components/forms/EmployeeForm.vue';
 import ListItems from '../components/items/ListItems.vue';
+
+import { getDate } from '../assets/base.js';
+
 export default {
   components: {
     EmployeeForm,
@@ -72,7 +75,7 @@ export default {
         .then((res) => {
           const data = res.employee;
           const item = {
-            _id: data._id,
+            id: data._id,
             name: data.name,
             surname: data.surname,
             birthdate: data.birthdate,
@@ -99,7 +102,7 @@ export default {
       }
 
       const data = item.data;
-      const id = data._id;
+      const id = data.id;
 
       this.$store.dispatch('loader/toggle', { type: 'edit' });
 
@@ -120,7 +123,17 @@ export default {
         .then((res) => {
           this.$store.dispatch('loader/toggle');
           this.isEditMode = false;
-          this.items[item.idx] = { ...res.employee };
+
+          this.items[item.idx] = {
+            id: res.employee._id,
+            name: res.employee.name,
+            surname: res.employee.surname,
+            birthdate: res.employee.birthdate,
+            email: res.employee.email,
+            role: res.employee.role,
+            team: res.employee.team,
+            manager: res.employee.manager
+          };
         })
         .catch(() => {
           this.isEditMode = false;
@@ -131,7 +144,7 @@ export default {
         });
     },
     deleteItem(idx) {
-      const id = this.items[idx]._id;
+      const id = this.items[idx].id;
       this.$store.dispatch('loader/toggle', { type: 'delete' });
       fetch('http://localhost:8000/employee/' + id, {
         method: 'DELETE'
@@ -168,7 +181,24 @@ export default {
           return res.json();
         })
         .then((res) => {
-          this.items = [...res.employees].reverse();
+          const fetchedItems = [...res.employees];
+          const temp = [];
+
+          for (const item of fetchedItems) {
+            temp.unshift({
+              id: item._id,
+              name: item.name,
+              surname: item.surname,
+              birthdate: getDate(item.birthdate),
+              email: item.email,
+              role: item.role,
+              team: item.team,
+              manager: item.manager
+            });
+          }
+
+          this.items = [...temp];
+
           this.$store.dispatch('loader/toggle');
         })
         .catch(() => {
@@ -187,9 +217,6 @@ export default {
 </script>
 
 <style scoped>
-.list-container {
-  position: relative;
-}
 :deep(.data-value) {
   width: calc((80% / 7));
 }

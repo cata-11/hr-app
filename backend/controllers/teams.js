@@ -1,33 +1,28 @@
-const Employee = require('../models/employee');
+const Team = require('../models/team');
 
 exports.get = (req, res, next) => {
-  Employee.find()
+  Team.find()
     .then((result) => {
       res.status(200).json({
-        msg: 'Employees fetched succesfully !',
-        employees: result
+        msg: 'Teams fetched succesfully !',
+        teams: result
       });
     })
     .catch((error) => next(error));
 };
 
 exports.create = (req, res, next) => {
-  const employee = new Employee({
+  const team = new Team({
     name: req.body.name,
-    surname: req.body.surname,
-    birthdate: req.body.birthdate,
-    email: req.body.email,
-    role: req.body.role,
-    team: req.body.team,
     manager: req.body.manager
   });
 
-  employee
+  team
     .save()
     .then((result) => {
       res.status(201).json({
-        msg: 'Employee created succesfully !',
-        employee: result
+        msg: 'Team created succesfully !',
+        team: result
       });
     })
     .catch((error) => next(error));
@@ -35,10 +30,10 @@ exports.create = (req, res, next) => {
 
 exports.delete = (req, res, next) => {
   const id = req.params.id;
-  Employee.findByIdAndDelete(id)
+  Team.findByIdAndDelete(id)
     .then(() => {
       res.status(200).json({
-        msg: 'Employee deleted succesfully !'
+        msg: 'Team deleted succesfully !'
       });
     })
     .catch((error) => next(error));
@@ -46,22 +41,18 @@ exports.delete = (req, res, next) => {
 
 exports.edit = (req, res, next) => {
   const id = req.params.id;
-  Employee.findByIdAndUpdate(
+  Team.findByIdAndUpdate(
     id,
     {
       name: req.body.name,
-      surname: req.body.surname,
-      email: req.body.email,
-      team: req.body.team,
-      role: req.body.role,
-      manager: 'reasigned_maybe'
+      manager: req.body.manager
     },
     { new: true }
   )
     .then((result) => {
       res.status(200).json({
-        msg: 'Employee edited succesfully !',
-        employee: result
+        msg: 'Team edited succesfully !',
+        team: result
       });
     })
     .catch((error) => next(error));

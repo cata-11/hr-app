@@ -2,14 +2,14 @@
   <section>
     <RoleForm @roleCreated="addRole($event)" mode="create" />
   </section>
-  <section>
-    <ListItems
-      :items="items"
-      :fields="fields"
-      @itemDeleted="deleteItem($event)"
-      @itemEdited="editItem($event)"
-    />
-  </section>
+
+  <ListItems
+    :items="items"
+    :fields="fields"
+    @itemDeleted="deleteItem($event)"
+    @itemEdited="editItem($event)"
+  />
+
   <Teleport to="#app">
     <section class="edit-form-container" v-if="isEditMode">
       <RoleForm

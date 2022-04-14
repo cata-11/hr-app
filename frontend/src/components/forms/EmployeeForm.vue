@@ -206,6 +206,7 @@ export default {
       }
 
       editedData.birthdate = this.employeeData.birthdate;
+
       this.$emit('employee-edited', {
         isChanged: isChanged,
         idx: this.employeeIdx,
