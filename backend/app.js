@@ -21,8 +21,9 @@ app.use(teamsRoutes);
 app.use(rolesRoutes);
 
 app.use((err, req, res, next) => {
-  console.log(err);
-  res.status(500).json({ message: err.message });
+  let msg = err.message;
+  let status = err.statusCode;
+  res.status(status).json({ message: msg, statusCode: status || 500 });
 });
 
 mongoose

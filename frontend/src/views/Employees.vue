@@ -78,7 +78,7 @@ export default {
         body: JSON.stringify({
           name: item.name,
           surname: item.surname,
-          birthdate: item.birthdate,
+          birthdate: getDate(item.birthdate),
           email: item.email,
           role: item.role,
           team: {

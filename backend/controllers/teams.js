@@ -13,20 +13,31 @@ exports.get = (req, res, next) => {
 };
 
 exports.create = (req, res, next) => {
-  const team = new Team({
-    name: req.body.name,
-    manager: req.body.manager
-  });
-
-  team
-    .save()
+  Team.findOne({ name: req.body.name })
     .then((result) => {
-      res.status(201).json({
-        msg: 'Team created succesfully !',
-        team: result
+      if (result) {
+        const error = new Error();
+        error.message = 'Team with such name already exists !';
+        error.statusCode = 409;
+        throw error;
+      }
+    })
+    .then(() => {
+      const team = new Team({
+        name: req.body.name,
+        manager: req.body.manager
+      });
+      team.save().then((result) => {
+        res.status(201).json({
+          msg: 'Team created succesfully !',
+          team: result
+        });
       });
     })
-    .catch((error) => next(error));
+    .catch((error) => {
+      if (!error.statusCode) error.statusCode = 500;
+      next(error);
+    });
 };
 
 exports.delete = (req, res, next) => {
@@ -45,36 +56,54 @@ exports.edit = (req, res, next) => {
 
   let oldName;
 
-  Team.findById(id)
+  Team.findOne({
+    name: req.body.name
+  })
     .then((result) => {
-      oldName = result.name;
-    })
-    .then(() => {
-      Employee.updateMany(
-        { 'team.name': oldName },
-        {
-          $set: {
-            team: {
+      if (result) {
+        const error = new Error();
+        error.message = 'Team with such name already exists !';
+        error.statusCode = 409;
+        throw error;
+      }
+
+      Team.findById(id)
+        .then((result) => {
+          oldName = result.name;
+        })
+        .then(() => {
+          Employee.updateMany(
+            { 'team.name': oldName },
+            {
+              $set: {
+                team: {
+                  name: req.body.name,
+                  manager: req.body.manager
+                }
+              }
+            }
+          );
+        })
+        .then(() => {
+          const r = Team.findByIdAndUpdate(
+            id,
+            {
               name: req.body.name,
               manager: req.body.manager
-            }
-          }
-        }
-      ).then(() => {
-        Team.findByIdAndUpdate(
-          id,
-          {
-            name: req.body.name,
-            manager: req.body.manager
-          },
-          { new: true }
-        ).then((result) => {
+            },
+            { new: true }
+          );
+          return r;
+        })
+        .then((result) => {
           res.status(200).json({
-            msg: 'Teams edited succesfully !',
+            msg: 'Team edited succesfully !',
             team: result
           });
         });
-      });
     })
-    .catch((error) => next(error));
+    .catch((error) => {
+      if (!error.statusCode) error.statusCode = 500;
+      next(error);
+    });
 };

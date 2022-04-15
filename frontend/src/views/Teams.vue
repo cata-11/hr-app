@@ -59,6 +59,12 @@ export default {
           return res.json();
         })
         .then((res) => {
+          console.log(res);
+          if (res.statusCode === 409) {
+            const err = new Error('Team with such name already exists !');
+            err.statusCode = 409;
+            throw err;
+          }
           const data = res.team;
           const item = {
             id: data._id,
@@ -69,11 +75,15 @@ export default {
           this.$store.dispatch('loader/toggle');
           this.items.unshift(item);
         })
-        .catch(() => {
+        .catch((err) => {
           this.$store.dispatch('loader/toggle');
+          let msg = 'Failed to add team. Try again later.';
+          if (err.statusCode === 409) {
+            msg = err.message;
+          }
           this.$store.dispatch('dialog/open', {
             type: 'error',
-            message: 'Failed to create team. Try again later.'
+            message: msg
           });
         });
     },
@@ -100,6 +110,13 @@ export default {
           return res.json();
         })
         .then((res) => {
+          console.log(res);
+          if (res.statusCode === 409) {
+            const err = new Error('Team with such name already exists !');
+            err.statusCode = 409;
+            throw err;
+          }
+
           this.$store.dispatch('loader/toggle');
           this.isEditMode = false;
 
@@ -110,12 +127,17 @@ export default {
             date: getDate(getMax(res.team.createdAt, res.team.updatedAt))
           };
         })
-        .catch(() => {
-          this.isEditMode = false;
+        .catch((err) => {
           this.$store.dispatch('loader/toggle');
+          let msg = 'Failed to edit team. Try again later.';
+          if (err.statusCode === 409) {
+            msg = err.message;
+          } else {
+            this.isEditMode = false;
+          }
           this.$store.dispatch('dialog/open', {
             type: 'error',
-            message: 'Failed to edit team. Try again later.'
+            message: msg
           });
         });
     },

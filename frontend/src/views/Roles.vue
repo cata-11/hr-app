@@ -58,6 +58,12 @@ export default {
           return res.json();
         })
         .then((res) => {
+          console.log(res);
+          if (res.statusCode === 409) {
+            const err = new Error('This role already exists !');
+            err.statusCode = 409;
+            throw err;
+          }
           const data = res.role;
           const item = {
             id: data._id,
@@ -67,11 +73,17 @@ export default {
           this.$store.dispatch('loader/toggle');
           this.items.unshift(item);
         })
-        .catch(() => {
+        .catch((err) => {
           this.$store.dispatch('loader/toggle');
+          let msg = 'Failed to edit role. Try again later.';
+          if (err.statusCode === 409) {
+            msg = err.message;
+          } else {
+            this.isEditMode = false;
+          }
           this.$store.dispatch('dialog/open', {
             type: 'error',
-            message: 'Failed to create role. Try again later.'
+            message: msg
           });
         });
     },
@@ -97,6 +109,13 @@ export default {
           return res.json();
         })
         .then((res) => {
+          console.log(res);
+          if (res.statusCode === 409) {
+            const err = new Error('This role already exists !');
+            err.statusCode = 409;
+            throw err;
+          }
+
           this.$store.dispatch('loader/toggle');
           this.isEditMode = false;
 
@@ -106,12 +125,17 @@ export default {
             date: getDate(getMax(res.role.createdAt, res.role.updatedAt))
           };
         })
-        .catch(() => {
-          this.isEditMode = false;
+        .catch((err) => {
           this.$store.dispatch('loader/toggle');
+          let msg = 'Failed to edit role. Try again later.';
+          if (err.statusCode === 409) {
+            msg = err.message;
+          } else {
+            this.isEditMode = false;
+          }
           this.$store.dispatch('dialog/open', {
             type: 'error',
-            message: 'Failed to edit role. Try again later.'
+            message: msg
           });
         });
     },
