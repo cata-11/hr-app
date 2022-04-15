@@ -42,11 +42,28 @@ exports.create = (req, res, next) => {
 
 exports.delete = (req, res, next) => {
   const id = req.params.id;
-  Team.findByIdAndDelete(id)
-    .then(() => {
-      res.status(200).json({
-        msg: 'Team deleted succesfully !'
-      });
+
+  Team.findById(id)
+    .then((result) => {
+      Employee.findOne({
+        'team.name': result.name
+      })
+        .then((result) => {
+          if (!result) {
+            Team.deleteOne({ _id: id }).then(() => {
+              res.status(200).json({
+                msg: 'Team deleted succesfully !'
+              });
+            });
+          } else if (result) {
+            const error = new Error();
+            error.message =
+              "There are still employees in this team. It can't be deleted.";
+            error.statusCode = 405;
+            throw error;
+          }
+        })
+        .catch((error) => next(error));
     })
     .catch((error) => next(error));
 };

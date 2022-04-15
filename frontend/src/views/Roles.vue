@@ -145,14 +145,28 @@ export default {
         .then((res) => {
           return res.json();
         })
-        .then(() => {
+        .then((res) => {
+          if (res.statusCode === 405) {
+            const err = new Error();
+            err.statusCode = 405;
+            err.msg = res.message;
+            throw err;
+          }
+
           this.items.splice(idx, 1);
           this.$store.dispatch('loader/toggle');
         })
-        .catch(() => {
+        .catch((err) => {
+          this.$store.dispatch('loader/toggle');
+
+          let msg = 'Failed to delete role. Try again later.';
+          if (err.statusCode === 405) {
+            msg = err.msg;
+          }
+
           this.$store.dispatch('dialog/open', {
             type: 'error',
-            message: 'Failed to delete role. Try again later.'
+            message: msg
           });
         });
     },

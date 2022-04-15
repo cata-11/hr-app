@@ -42,11 +42,28 @@ exports.create = (req, res, next) => {
 
 exports.delete = (req, res, next) => {
   const id = req.params.id;
-  Role.findByIdAndDelete(id)
-    .then(() => {
-      res.status(200).json({
-        msg: 'Role deleted succesfully !'
-      });
+
+  Role.findById(id)
+    .then((result) => {
+      Employee.findOne({
+        role: result.name
+      })
+        .then((result) => {
+          if (!result) {
+            Role.deleteOne({ _id: id }).then(() => {
+              res.status(200).json({
+                msg: 'Role deleted succesfully !'
+              });
+            });
+          } else if (result) {
+            const error = new Error();
+            error.message =
+              "This role is assigned to one or more employees. Therefore it can't be deleted.";
+            error.statusCode = 405;
+            throw error;
+          }
+        })
+        .catch((error) => next(error));
     })
     .catch((error) => next(error));
 };
