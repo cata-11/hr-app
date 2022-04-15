@@ -65,10 +65,7 @@ export default {
     createRole() {
       this.role.date = getDate();
       this.$emit('role-created', { ...this.role });
-
-      for (const key in this.role) {
-        this.role[key] = '';
-      }
+      this.resetForm();
     },
     editRole() {
       const initialData = { ...this.roleData };
@@ -101,11 +98,9 @@ export default {
       }
       if (this.mode === 'create') this.createRole();
       else if (this.mode === 'edit') this.editRole();
-      this.resetForm();
     },
     closeModal() {
       this.$emit('modal-closed');
-      this.resetForm();
     }
   },
   mounted() {

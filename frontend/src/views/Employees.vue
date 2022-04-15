@@ -1,7 +1,7 @@
 <template>
   <section style="position: relative">
     <TheLoader
-      v-if="roles.length === 0 && teams.length === 0"
+      v-if="roles.length === 0 && teams.length === 0 && isLoading"
       :fetchSome="true"
     />
     <EmployeeForm
@@ -48,7 +48,6 @@ export default {
   },
   data() {
     return {
-      isLoading: false,
       isEditMode: false,
       employeeToEdit: {},
       employeeToEditIdx: null,
@@ -66,6 +65,13 @@ export default {
       ]
     };
   },
+
+  computed: {
+    isLoading() {
+      return this.$store.getters['loader/isLoading'];
+    }
+  },
+
   methods: {
     getTeam(name) {
       return this.teams.find((team) => team.name === name);
@@ -219,6 +225,9 @@ export default {
           }
           this.items = [...temp];
 
+          this.fetchTeams();
+          this.fetchRoles();
+
           this.$store.dispatch('loader/toggle');
         })
         .catch(() => {
@@ -243,10 +252,7 @@ export default {
           }
         })
         .catch(() => {
-          this.$store.dispatch('dialog/open', {
-            type: 'error',
-            message: 'Failed to fetch available teams. Try again later.'
-          });
+          throw new Error();
         });
     },
     fetchTeams() {
@@ -266,17 +272,12 @@ export default {
           }
         })
         .catch(() => {
-          this.$store.dispatch('dialog/open', {
-            type: 'error',
-            message: 'Failed to fetch available teams. Try again later.'
-          });
+          throw new Error();
         });
     }
   },
   mounted() {
     this.fetchEmployees();
-    this.fetchRoles();
-    this.fetchTeams();
   }
 };
 </script>

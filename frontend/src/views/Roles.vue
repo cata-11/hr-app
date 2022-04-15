@@ -58,7 +58,6 @@ export default {
           return res.json();
         })
         .then((res) => {
-          console.log(res);
           if (res.statusCode === 409) {
             const err = new Error('This role already exists !');
             err.statusCode = 409;
@@ -75,11 +74,9 @@ export default {
         })
         .catch((err) => {
           this.$store.dispatch('loader/toggle');
-          let msg = 'Failed to edit role. Try again later.';
+          let msg = 'Failed to add role. Try again later.';
           if (err.statusCode === 409) {
             msg = err.message;
-          } else {
-            this.isEditMode = false;
           }
           this.$store.dispatch('dialog/open', {
             type: 'error',

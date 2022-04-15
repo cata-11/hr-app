@@ -54,25 +54,24 @@ exports.delete = (req, res, next) => {
 exports.edit = (req, res, next) => {
   const id = req.params.id;
 
-  let oldName;
-
   Team.findOne({
     name: req.body.name
   })
     .then((result) => {
-      if (result) {
-        const error = new Error();
-        error.message = 'Team with such name already exists !';
-        error.statusCode = 409;
-        throw error;
-      }
+      if (result)
+        if (result._id.toString() !== id) {
+          const error = new Error();
+          error.message = 'Team with such name already exists !';
+          error.statusCode = 409;
+          throw error;
+        }
 
       Team.findById(id)
         .then((result) => {
-          oldName = result.name;
+          return result.name;
         })
-        .then(() => {
-          Employee.updateMany(
+        .then((oldName) => {
+          const r = Employee.updateMany(
             { 'team.name': oldName },
             {
               $set: {
@@ -83,8 +82,9 @@ exports.edit = (req, res, next) => {
               }
             }
           );
+          return r;
         })
-        .then(() => {
+        .then((result) => {
           const r = Team.findByIdAndUpdate(
             id,
             {

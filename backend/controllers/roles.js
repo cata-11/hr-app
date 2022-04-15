@@ -54,8 +54,6 @@ exports.delete = (req, res, next) => {
 exports.edit = (req, res, next) => {
   const id = req.params.id;
 
-  let oldName;
-
   Role.findOne({
     name: req.body.name
   })
@@ -69,10 +67,10 @@ exports.edit = (req, res, next) => {
 
       Role.findById(id)
         .then((result) => {
-          oldName = result.name;
+          return result.name;
         })
-        .then(() => {
-          Employee.updateMany(
+        .then((oldName) => {
+          const r = Employee.updateMany(
             { role: oldName },
             {
               $set: {
@@ -80,8 +78,9 @@ exports.edit = (req, res, next) => {
               }
             }
           );
+          return r;
         })
-        .then(() => {
+        .then((result) => {
           const r = Role.findByIdAndUpdate(
             id,
             {
@@ -102,37 +101,4 @@ exports.edit = (req, res, next) => {
       if (!error.statusCode) error.statusCode = 500;
       next(error);
     });
-
-  // const id = req.params.id;
-
-  // let oldName;
-
-  // Role.findById(id)
-  //   .then((result) => {
-  //     oldName = result.name;
-  //   })
-  //   .then(() => {
-  //     Employee.updateMany(
-  //       { role: oldName },
-  //       {
-  //         $set: {
-  //           role: req.body.name
-  //         }
-  //       }
-  //     ).then(() => {
-  //       Role.findByIdAndUpdate(
-  //         id,
-  //         {
-  //           name: req.body.name
-  //         },
-  //         { new: true }
-  //       ).then((result) => {
-  //         res.status(200).json({
-  //           msg: 'Roles edited succesfully !',
-  //           role: result
-  //         });
-  //       });
-  //     });
-  //   })
-  //   .catch((error) => next(error));
 };
