@@ -23,11 +23,7 @@ const schema = new Schema({
     required: true
   },
   team: {
-    type: String,
-    required: true
-  },
-  manager: {
-    type: String,
+    type: Object,
     required: true
   }
 });

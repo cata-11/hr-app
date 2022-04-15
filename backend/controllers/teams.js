@@ -1,4 +1,5 @@
 const Team = require('../models/team');
+const Employee = require('../models/employee');
 
 exports.get = (req, res, next) => {
   Team.find()
@@ -41,18 +42,38 @@ exports.delete = (req, res, next) => {
 
 exports.edit = (req, res, next) => {
   const id = req.params.id;
-  Team.findByIdAndUpdate(
-    id,
-    {
-      name: req.body.name,
-      manager: req.body.manager
-    },
-    { new: true }
-  )
+
+  let oldName;
+
+  Team.findById(id)
     .then((result) => {
-      res.status(200).json({
-        msg: 'Team edited succesfully !',
-        team: result
+      oldName = result.name;
+    })
+    .then(() => {
+      Employee.updateMany(
+        { 'team.name': oldName },
+        {
+          $set: {
+            team: {
+              name: req.body.name,
+              manager: req.body.manager
+            }
+          }
+        }
+      ).then(() => {
+        Team.findByIdAndUpdate(
+          id,
+          {
+            name: req.body.name,
+            manager: req.body.manager
+          },
+          { new: true }
+        ).then((result) => {
+          res.status(200).json({
+            msg: 'Teams edited succesfully !',
+            team: result
+          });
+        });
       });
     })
     .catch((error) => next(error));

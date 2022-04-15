@@ -41,9 +41,9 @@
           @change="isTeamSelected"
         >
           <option disabled selected value="">Team</option>
-          <option value="team 1">team 1</option>
-          <option value="team 2">team 2</option>
-          <option value="team 3">team 3</option>
+          <option v-for="team in teams" :key="team.id" :value="team.name">
+            Team: {{ team.name }}
+          </option>
         </select>
         <p class="error">{{ error.team }}</p>
       </div>
@@ -63,8 +63,9 @@
           @change="isRoleSelected"
         >
           <option disabled selected value="">Role</option>
-          <option value="role 1">role 1</option>
-          <option value="role 2">role 2</option>
+          <option v-for="role in roles" :key="role" :value="role">
+            Role: {{ role }}
+          </option>
         </select>
         <p class="error">{{ error.role }}</p>
       </div>
@@ -75,7 +76,7 @@
 <script>
 import BaseForm from '../base/BaseForm.vue';
 export default {
-  props: ['mode', 'employeeData', 'employeeIdx'],
+  props: ['mode', 'employeeData', 'employeeIdx', 'teams', 'roles'],
   emits: ['employee-created', 'employee-edited', 'modal-closed'],
   components: {
     BaseForm
@@ -219,6 +220,7 @@ export default {
       }
       if (this.mode === 'create') this.createEmployee();
       else if (this.mode === 'edit') this.editEmployee();
+      this.resetForm();
     },
     closeModal() {
       this.$emit('modal-closed');

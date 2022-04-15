@@ -1,5 +1,5 @@
 <template>
-  <section :class="type">
+  <section :class="[type, { 'fetch-some': fetchSome }]">
     <div class="lds-facebook">
       <div></div>
       <div></div>
@@ -10,6 +10,7 @@
 
 <script>
 export default {
+  props: ['fetchSome'],
   computed: {
     type() {
       return this.$store.getters['loader/type'];
@@ -30,7 +31,8 @@ section {
 }
 .delete,
 .add,
-.edit {
+.edit,
+.fetch-some {
   background-color: rgba(19, 19, 19, 0.3);
   position: absolute;
   top: 0;

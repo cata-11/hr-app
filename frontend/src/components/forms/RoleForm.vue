@@ -52,6 +52,16 @@ export default {
       }
       return true;
     },
+
+    resetForm() {
+      for (const key in this.role) {
+        this.role[key] = '';
+      }
+      for (const key in this.error) {
+        this.role[key] = '';
+      }
+    },
+
     createRole() {
       this.role.date = getDate();
       this.$emit('role-created', { ...this.role });
@@ -91,9 +101,11 @@ export default {
       }
       if (this.mode === 'create') this.createRole();
       else if (this.mode === 'edit') this.editRole();
+      this.resetForm();
     },
     closeModal() {
       this.$emit('modal-closed');
+      this.resetForm();
     }
   },
   mounted() {

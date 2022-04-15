@@ -1,6 +1,15 @@
 <template>
-  <section>
-    <EmployeeForm @employeeCreated="addEmployee($event)" mode="create" />
+  <section style="position: relative">
+    <TheLoader
+      v-if="roles.length === 0 && teams.length === 0"
+      :fetchSome="true"
+    />
+    <EmployeeForm
+      @employeeCreated="addEmployee($event)"
+      mode="create"
+      :roles="roles"
+      :teams="teams"
+    />
   </section>
 
   <ListItems
@@ -15,6 +24,8 @@
       <EmployeeForm
         class="edit-form"
         mode="edit"
+        :roles="roles"
+        :teams="teams"
         :employeeData="employeeToEdit"
         :employeeIdx="employeeToEditIdx"
         @employeeEdited="changeEmployee($event)"
@@ -42,6 +53,8 @@ export default {
       employeeToEdit: {},
       employeeToEditIdx: null,
       items: [],
+      roles: [],
+      teams: [],
       fields: [
         'Name',
         'Surname',
@@ -54,6 +67,9 @@ export default {
     };
   },
   methods: {
+    getTeam(name) {
+      return this.teams.find((team) => team.name === name);
+    },
     addEmployee(item) {
       this.$store.dispatch('loader/toggle', { type: 'add' });
       fetch('http://localhost:8000/employee', {
@@ -65,8 +81,10 @@ export default {
           birthdate: item.birthdate,
           email: item.email,
           role: item.role,
-          team: item.team,
-          manager: 'auto_assigned_by_team'
+          team: {
+            name: this.getTeam(item.team).name,
+            manager: this.getTeam(item.team).manager
+          }
         })
       })
         .then((res) => {
@@ -81,8 +99,8 @@ export default {
             birthdate: data.birthdate,
             email: data.email,
             role: data.role,
-            team: data.team,
-            manager: data.manager
+            team: data.team.name,
+            manager: data.team.manager
           };
           this.$store.dispatch('loader/toggle');
           this.items.unshift(item);
@@ -114,7 +132,10 @@ export default {
           surname: data.surname,
           email: data.email,
           role: data.role,
-          team: data.team
+          team: {
+            name: this.getTeam(data.team).name,
+            manager: this.getTeam(data.team).manager
+          }
         })
       })
         .then((res) => {
@@ -131,8 +152,8 @@ export default {
             birthdate: res.employee.birthdate,
             email: res.employee.email,
             role: res.employee.role,
-            team: res.employee.team,
-            manager: res.employee.manager
+            team: res.employee.team.name,
+            manager: res.employee.team.manager
           };
         })
         .catch(() => {
@@ -171,7 +192,7 @@ export default {
     closeModal() {
       this.isEditMode = false;
     },
-    fetchItems() {
+    fetchEmployees() {
       this.$store.dispatch('loader/toggle', { type: 'fetch' });
       fetch('http://localhost:8000/employees', {
         method: 'GET',
@@ -192,11 +213,10 @@ export default {
               birthdate: getDate(item.birthdate),
               email: item.email,
               role: item.role,
-              team: item.team,
-              manager: item.manager
+              team: item.team.name,
+              manager: item.team.manager
             });
           }
-
           this.items = [...temp];
 
           this.$store.dispatch('loader/toggle');
@@ -205,13 +225,58 @@ export default {
           this.$store.dispatch('loader/toggle');
           this.$store.dispatch('dialog/open', {
             type: 'error',
-            message: 'Failed to fetch employees. Try again later.'
+            message: 'Failed to fetch data. Try again later.'
+          });
+        });
+    },
+    fetchRoles() {
+      fetch('http://localhost:8000/roles', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((res) => {
+          for (const item of res.roles) {
+            this.roles.push(item.name);
+          }
+        })
+        .catch(() => {
+          this.$store.dispatch('dialog/open', {
+            type: 'error',
+            message: 'Failed to fetch available teams. Try again later.'
+          });
+        });
+    },
+    fetchTeams() {
+      fetch('http://localhost:8000/teams', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((res) => {
+          for (const item of res.teams) {
+            this.teams.push({
+              name: item.name,
+              manager: item.manager
+            });
+          }
+        })
+        .catch(() => {
+          this.$store.dispatch('dialog/open', {
+            type: 'error',
+            message: 'Failed to fetch available teams. Try again later.'
           });
         });
     }
   },
   mounted() {
-    this.fetchItems();
+    this.fetchEmployees();
+    this.fetchRoles();
+    this.fetchTeams();
   }
 };
 </script>

@@ -18,8 +18,10 @@ exports.create = (req, res, next) => {
     birthdate: req.body.birthdate,
     email: req.body.email,
     role: req.body.role,
-    team: req.body.team,
-    manager: req.body.manager
+    team: {
+      name: req.body.team.name,
+      manager: req.body.team.manager
+    }
   });
 
   employee
@@ -52,9 +54,11 @@ exports.edit = (req, res, next) => {
       name: req.body.name,
       surname: req.body.surname,
       email: req.body.email,
-      team: req.body.team,
       role: req.body.role,
-      manager: 'reasigned_maybe'
+      team: {
+        name: req.body.team.name,
+        manager: req.body.team.manager
+      }
     },
     { new: true }
   )
