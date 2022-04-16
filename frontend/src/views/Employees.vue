@@ -33,21 +33,30 @@
       />
     </section>
   </Teleport>
+
+  <ThePagination
+    v-if="items.length"
+    @pageChanged="fetchEmployees($event)"
+    :totalPages="totalPages"
+  />
 </template>
 
 <script>
 import EmployeeForm from '../components/forms/EmployeeForm.vue';
 import ListItems from '../components/items/ListItems.vue';
+import ThePagination from '../components/layout/ThePagination.vue';
 
 import { getDate } from '../assets/base.js';
 
 export default {
   components: {
     EmployeeForm,
-    ListItems
+    ListItems,
+    ThePagination
   },
   data() {
     return {
+      totalPages: 0,
       isEditMode: false,
       employeeToEdit: {},
       employeeToEditIdx: null,
@@ -198,9 +207,9 @@ export default {
     closeModal() {
       this.isEditMode = false;
     },
-    fetchEmployees() {
+    fetchEmployees(pageNr = 1) {
       this.$store.dispatch('loader/toggle', { type: 'fetch' });
-      fetch('http://localhost:8000/employees', {
+      fetch('http://localhost:8000/employees?page=' + pageNr, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
       })
@@ -208,6 +217,8 @@ export default {
           return res.json();
         })
         .then((res) => {
+          this.totalPages = res.totalPages;
+
           const fetchedItems = [...res.employees];
           const temp = [];
 
@@ -225,9 +236,6 @@ export default {
           }
           this.items = [...temp];
 
-          this.fetchTeams();
-          this.fetchRoles();
-
           this.$store.dispatch('loader/toggle');
         })
         .catch(() => {
@@ -239,7 +247,7 @@ export default {
         });
     },
     fetchRoles() {
-      fetch('http://localhost:8000/roles', {
+      fetch('http://localhost:8000/roles?all=true', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
       })
@@ -247,16 +255,17 @@ export default {
           return res.json();
         })
         .then((res) => {
+          this.roles = [];
           for (const item of res.roles) {
             this.roles.push(item.name);
           }
         })
-        .catch(() => {
-          throw new Error();
+        .catch((err) => {
+          console.log(err);
         });
     },
     fetchTeams() {
-      fetch('http://localhost:8000/teams', {
+      fetch('http://localhost:8000/teams?all=true', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
       })
@@ -264,6 +273,7 @@ export default {
           return res.json();
         })
         .then((res) => {
+          this.teams = [];
           for (const item of res.teams) {
             this.teams.push({
               name: item.name,
@@ -271,13 +281,15 @@ export default {
             });
           }
         })
-        .catch(() => {
-          throw new Error();
+        .catch((err) => {
+          console.log(err);
         });
     }
   },
   mounted() {
     this.fetchEmployees();
+    this.fetchTeams();
+    this.fetchRoles();
   }
 };
 </script>

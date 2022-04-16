@@ -22,9 +22,17 @@
       />
     </section>
   </Teleport>
+
+  <ThePagination
+    v-if="items.length"
+    @pageChanged="fetchTeams($event)"
+    :totalPages="totalPages"
+  />
 </template>
 
 <script>
+import ThePagination from '../components/layout/ThePagination.vue';
+
 import TeamForm from '../components/forms/TeamForm.vue';
 import ListItems from '../components/items/ListItems.vue';
 
@@ -33,10 +41,12 @@ import { getDate, getMax } from '../assets/base.js';
 export default {
   components: {
     ListItems,
-    TeamForm
+    TeamForm,
+    ThePagination
   },
   data() {
     return {
+      totalPages: 0,
       isEditMode: false,
       teamToEdit: {},
       teamToEditIdx: null,
@@ -182,9 +192,9 @@ export default {
     closeModal() {
       this.isEditMode = false;
     },
-    fetchTeams() {
+    fetchTeams(pageNr = 1) {
       this.$store.dispatch('loader/toggle', { type: 'fetch' });
-      fetch('http://localhost:8000/teams', {
+      fetch('http://localhost:8000/teams?page=' + pageNr, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
       })
@@ -192,6 +202,8 @@ export default {
           return res.json();
         })
         .then((res) => {
+          this.totalPages = res.totalPages;
+
           const fetchedItems = [...res.teams];
           const temp = [];
 

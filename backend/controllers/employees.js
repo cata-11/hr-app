@@ -1,11 +1,22 @@
 const Employee = require('../models/employee');
 
 exports.get = (req, res, next) => {
+  const page = +req.query.page || 1;
+  const maxItems = 10;
+  let totalPages = 0;
   Employee.find()
+    .countDocuments()
+    .then((result) => {
+      totalPages = Math.ceil(result / maxItems);
+      return Employee.find()
+        .skip((page - 1) * maxItems)
+        .limit(maxItems);
+    })
     .then((result) => {
       res.status(200).json({
         msg: 'Employees fetched succesfully !',
-        employees: result
+        employees: result,
+        totalPages: totalPages
       });
     })
     .catch((error) => next(error));

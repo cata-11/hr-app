@@ -22,9 +22,17 @@
       />
     </section>
   </Teleport>
+
+  <ThePagination
+    v-if="items.length"
+    @pageChanged="fetchRoles($event)"
+    :totalPages="totalPages"
+  />
 </template>
 
 <script>
+import ThePagination from '../components/layout/ThePagination.vue';
+
 import RoleForm from '../components/forms/RoleForm.vue';
 import ListItems from '../components/items/ListItems.vue';
 
@@ -33,10 +41,12 @@ import { getDate, getMax } from '../assets/base.js';
 export default {
   components: {
     RoleForm,
-    ListItems
+    ListItems,
+    ThePagination
   },
   data() {
     return {
+      totalPages: 0,
       isEditMode: false,
       roleToEdit: {},
       roleToEditIdx: null,
@@ -180,9 +190,9 @@ export default {
     closeModal() {
       this.isEditMode = false;
     },
-    fetchRoles() {
+    fetchRoles(pageNr = 1) {
       this.$store.dispatch('loader/toggle', { type: 'fetch' });
-      fetch('http://localhost:8000/roles', {
+      fetch('http://localhost:8000/roles?page=' + pageNr, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
       })
@@ -190,6 +200,8 @@ export default {
           return res.json();
         })
         .then((res) => {
+          this.totalPages = res.totalPages;
+
           const fetchedItems = [...res.roles];
           const temp = [];
 

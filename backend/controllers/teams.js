@@ -2,11 +2,34 @@ const Team = require('../models/team');
 const Employee = require('../models/employee');
 
 exports.get = (req, res, next) => {
+  if (req.query.all === 'true') {
+    Team.find()
+      .then((result) => {
+        res.status(200).json({
+          msg: 'Roles fetched succesfully !',
+          teams: result
+        });
+      })
+      .catch((error) => next(error));
+    return;
+  }
+
+  const page = +req.query.page || 1;
+  const maxItems = 10;
+  let totalPages = 0;
   Team.find()
+    .countDocuments()
+    .then((result) => {
+      totalPages = Math.ceil(result / maxItems);
+      return Team.find()
+        .skip((page - 1) * maxItems)
+        .limit(maxItems);
+    })
     .then((result) => {
       res.status(200).json({
         msg: 'Teams fetched succesfully !',
-        teams: result
+        teams: result,
+        totalPages: totalPages
       });
     })
     .catch((error) => next(error));
