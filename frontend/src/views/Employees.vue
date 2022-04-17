@@ -204,7 +204,13 @@ export default {
         })
         .then(() => {
           this.items.splice(idx, 1);
-          this.$store.dispatch('loader/toggle');
+
+          if (this.items.length === 0) {
+            this.$store.dispatch('loader/toggle');
+            this.fetchEmployees();
+          } else {
+            this.$store.dispatch('loader/toggle');
+          }
         })
         .catch(() => {
           this.$store.dispatch('dialog/open', {

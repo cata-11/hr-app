@@ -44,17 +44,19 @@ export default {
           return res.json();
         })
         .then((res) => {
-          this.$store.dispatch('loader/toggle');
           if (res.statusCode === 409) {
             const err = new Error(res.message);
             err.statusCode = res.statusCode;
             throw err;
           }
-          this.forceRender++;
+
           this.$store.dispatch('dialog/open', {
             type: 'success',
             message: res.msg
           });
+
+          this.forceRender++;
+          this.$store.dispatch('loader/toggle');
         })
         .catch((err) => {
           this.$store.dispatch('loader/toggle');

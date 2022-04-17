@@ -172,7 +172,13 @@ export default {
           }
 
           this.items.splice(idx, 1);
-          this.$store.dispatch('loader/toggle');
+
+          if (this.items.length === 0) {
+            this.$store.dispatch('loader/toggle');
+            this.fetchRoles();
+          } else {
+            this.$store.dispatch('loader/toggle');
+          }
         })
         .catch((err) => {
           this.$store.dispatch('loader/toggle');
