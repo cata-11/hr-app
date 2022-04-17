@@ -11,7 +11,7 @@
         <input
           type="text"
           placeholder="Role"
-          v-model="role.name"
+          v-model.trim="role.name"
           :class="{ invalid: !!error.name }"
           @input="isNameValid"
         />
@@ -58,13 +58,14 @@ export default {
         this.role[key] = '';
       }
       for (const key in this.error) {
-        this.role[key] = '';
+        this.error[key] = '';
       }
     },
 
     createRole() {
       this.role.date = getDate();
       this.$emit('role-created', { ...this.role });
+      this.resetForm();
     },
     editRole() {
       const initialData = { ...this.roleData };
@@ -78,7 +79,7 @@ export default {
           break;
         }
       }
-      
+
       if (!isChanged) {
         editedData.date = getDate();
         return;

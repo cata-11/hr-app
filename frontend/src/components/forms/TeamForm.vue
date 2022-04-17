@@ -11,7 +11,7 @@
         <input
           type="text"
           placeholder="Name"
-          v-model="team.name"
+          v-model.trim="team.name"
           :class="{ invalid: !!error.name }"
           @input="isNameValid"
         />
@@ -21,7 +21,7 @@
         <input
           type="text"
           placeholder="Manager"
-          v-model="team.manager"
+          v-model.trim="team.manager"
           :class="{ invalid: !!error.manager }"
           @input="isManagerValid"
         />
@@ -78,13 +78,19 @@ export default {
       }
       return true;
     },
-    createTeam() {
-      this.team.date = getDate();
-      this.$emit('team-created', { ...this.team });
 
+    resetForm() {
       for (const key in this.team) {
         this.team[key] = '';
       }
+      for (const key in this.error) {
+        this.error[key] = '';
+      }
+    },
+    createTeam() {
+      this.team.date = getDate();
+      this.$emit('team-created', { ...this.team });
+      this.resetForm();
     },
     editTeam() {
       const initialData = { ...this.teamData };

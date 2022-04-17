@@ -122,7 +122,6 @@ export default {
           return res.json();
         })
         .then((res) => {
-          console.log(res);
           if (res.statusCode === 409) {
             const err = new Error('This role already exists !');
             err.statusCode = 409;

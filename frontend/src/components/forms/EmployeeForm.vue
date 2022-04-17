@@ -11,7 +11,7 @@
         <input
           type="text"
           placeholder="Name"
-          v-model="employee.name"
+          v-model.trim="employee.name"
           :class="{ invalid: !!error.name }"
           @input="isNameValid"
         />
@@ -30,7 +30,7 @@
         <input
           type="text"
           placeholder="Surname"
-          v-model="employee.surname"
+          v-model.trim="employee.surname"
           :class="{ invalid: !!error.surname }"
           @input="isSurnameValid"
         />
@@ -51,14 +51,14 @@
         <input
           type="email"
           placeholder="Email"
-          v-model="employee.email"
+          v-model.trim="employee.email"
           :class="{ invalid: !!error.email }"
           @input="isEmailValid"
         />
         <p class="error">{{ error.email }}</p>
 
         <select
-          v-model="employee.role"
+          v-model.trim="employee.role"
           :class="{ invalid: !!error.role }"
           @change="isRoleSelected"
         >

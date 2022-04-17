@@ -40,6 +40,7 @@ exports.get = (req, res, next) => {
 exports.create = (req, res, next) => {
   Team.findOne({ name: req.body.name })
     .then((result) => {
+      console.log(result);
       if (result) {
         const error = new Error();
         error.message = 'Team with such name already exists !';
