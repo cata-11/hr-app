@@ -10,7 +10,7 @@ exports.get = (req, res, next) => {
       totalPages = Math.ceil(result / maxItems);
       totalDocs = result;
       return Employee.find()
-        .sort()
+        .sort({ createdAt: 'desc' })
         .skip((page - 1) * maxItems)
         .limit(maxItems);
     })
@@ -39,7 +39,6 @@ exports.create = (req, res, next) => {
 
   employee
     .save()
-    .unshift()
     .then((result) => {
       res.status(201).json({
         msg: 'Employee created succesfully !',

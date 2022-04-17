@@ -22,6 +22,7 @@ exports.get = (req, res, next) => {
     .then((result) => {
       totalPages = Math.ceil(result / maxItems);
       return Team.find()
+        .sort({ createdAt: 'desc' })
         .skip((page - 1) * maxItems)
         .limit(maxItems);
     })

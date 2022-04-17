@@ -237,7 +237,7 @@ export default {
           const temp = [];
 
           for (const item of fetchedItems) {
-            temp.unshift({
+            temp.push({
               id: item._id,
               name: item.name,
               surname: item.surname,
