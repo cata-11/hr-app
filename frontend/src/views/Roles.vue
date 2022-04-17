@@ -193,8 +193,6 @@ export default {
       this.roleToEdit = { ...this.items[idx] };
       this.roleToEditIdx = idx;
       this.isEditMode = true;
-
-      idx;
     },
     closeModal() {
       this.isEditMode = false;

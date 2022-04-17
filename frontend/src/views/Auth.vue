@@ -69,7 +69,6 @@ export default {
         });
     },
     logIn(user) {
-      console.log(user);
       this.$store.dispatch('loader/toggle', { type: 'auth' });
 
       fetch('http://localhost:8000/login', {
@@ -84,14 +83,12 @@ export default {
           return res.json();
         })
         .then((res) => {
-          this.$store.dispatch('loader/toggle');
-
           if (res.statusCode === 404) {
             const err = new Error(res.message);
             err.statusCode = res.statusCode;
             throw err;
           }
-
+          this.$store.dispatch('loader/toggle');
           this.$store.dispatch('user/login', {
             email: res.email,
             token: res.token,

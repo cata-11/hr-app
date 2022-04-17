@@ -72,7 +72,6 @@ export default {
           return res.json();
         })
         .then((res) => {
-          console.log(res);
           if (res.statusCode === 409) {
             const err = new Error('Team with such name already exists !');
             err.statusCode = 409;
@@ -126,7 +125,6 @@ export default {
           return res.json();
         })
         .then((res) => {
-          console.log(res);
           if (res.statusCode === 409) {
             const err = new Error('Team with such name already exists !');
             err.statusCode = 409;

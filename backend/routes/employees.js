@@ -2,7 +2,7 @@ const express = require('express');
 
 const controller = require('../controllers/employees');
 
-const isAdmin = require('../auth/admin');
+const isAdmin = require('../admin/admin');
 
 const router = express.Router();
 

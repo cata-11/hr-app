@@ -17,6 +17,7 @@ exports.get = (req, res, next) => {
   const page = +req.query.page || 1;
   const maxItems = 10;
   let totalPages = 0;
+
   Role.find()
     .countDocuments()
     .then((result) => {
@@ -58,10 +59,7 @@ exports.create = (req, res, next) => {
         });
       });
     })
-    .catch((error) => {
-      if (!error.statusCode) error.statusCode = 500;
-      next(error);
-    });
+    .catch((error) => next(error));
 };
 
 exports.delete = (req, res, next) => {
@@ -69,25 +67,22 @@ exports.delete = (req, res, next) => {
 
   Role.findById(id)
     .then((result) => {
-      Employee.findOne({
+      return Employee.findOne({
         role: result.name
-      })
-        .then((result) => {
-          if (!result) {
-            Role.deleteOne({ _id: id }).then(() => {
-              res.status(200).json({
-                msg: 'Role deleted succesfully !'
-              });
-            });
-          } else if (result) {
-            const error = new Error();
-            error.message =
-              "This role is assigned to one or more employees. Therefore it can't be deleted.";
-            error.statusCode = 405;
-            throw error;
-          }
-        })
-        .catch((error) => next(error));
+      }).then((result) => {
+        if (result) {
+          const error = new Error();
+          error.message =
+            "This role is assigned to one or more employees. Therefore it can't be deleted.";
+          error.statusCode = 405;
+          throw error;
+        }
+        Role.deleteOne({ _id: id }).then(() => {
+          res.status(200).json({
+            msg: 'Role deleted succesfully !'
+          });
+        });
+      });
     })
     .catch((error) => next(error));
 };
@@ -111,7 +106,7 @@ exports.edit = (req, res, next) => {
           return result.name;
         })
         .then((oldName) => {
-          const r = Employee.updateMany(
+          return Employee.updateMany(
             { role: oldName },
             {
               $set: {
@@ -119,17 +114,15 @@ exports.edit = (req, res, next) => {
               }
             }
           );
-          return r;
         })
-        .then((result) => {
-          const r = Role.findByIdAndUpdate(
+        .then(() => {
+          return Role.findByIdAndUpdate(
             id,
             {
               name: req.body.name
             },
             { new: true }
           );
-          return r;
         })
         .then((result) => {
           res.status(200).json({
@@ -138,8 +131,5 @@ exports.edit = (req, res, next) => {
           });
         });
     })
-    .catch((error) => {
-      if (!error.statusCode) error.statusCode = 500;
-      next(error);
-    });
+    .catch((error) => next(error));
 };

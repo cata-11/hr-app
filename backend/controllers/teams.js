@@ -17,6 +17,7 @@ exports.get = (req, res, next) => {
   const page = +req.query.page || 1;
   const maxItems = 10;
   let totalPages = 0;
+
   Team.find()
     .countDocuments()
     .then((result) => {
@@ -58,10 +59,7 @@ exports.create = (req, res, next) => {
         });
       });
     })
-    .catch((error) => {
-      if (!error.statusCode) error.statusCode = 500;
-      next(error);
-    });
+    .catch((error) => next(error));
 };
 
 exports.delete = (req, res, next) => {
@@ -69,25 +67,23 @@ exports.delete = (req, res, next) => {
 
   Team.findById(id)
     .then((result) => {
-      Employee.findOne({
+      return Employee.findOne({
         'team.name': result.name
-      })
-        .then((result) => {
-          if (!result) {
-            Team.deleteOne({ _id: id }).then(() => {
-              res.status(200).json({
-                msg: 'Team deleted succesfully !'
-              });
-            });
-          } else if (result) {
-            const error = new Error();
-            error.message =
-              "There are still employees in this team. It can't be deleted.";
-            error.statusCode = 405;
-            throw error;
-          }
-        })
-        .catch((error) => next(error));
+      }).then((result) => {
+        if (result) {
+          const error = new Error();
+          error.message =
+            "There are still employees in this team. It can't be deleted.";
+          error.statusCode = 405;
+          throw error;
+        }
+
+        Team.deleteOne({ _id: id }).then(() => {
+          res.status(200).json({
+            msg: 'Team deleted succesfully !'
+          });
+        });
+      });
     })
     .catch((error) => next(error));
 };
@@ -111,9 +107,9 @@ exports.edit = (req, res, next) => {
         .then((result) => {
           return result.name;
         })
-        .then((oldName) => {
-          const r = Employee.updateMany(
-            { 'team.name': oldName },
+        .then((result) => {
+          return Employee.updateMany(
+            { 'team.name': result },
             {
               $set: {
                 team: {
@@ -123,10 +119,9 @@ exports.edit = (req, res, next) => {
               }
             }
           );
-          return r;
         })
-        .then((result) => {
-          const r = Team.findByIdAndUpdate(
+        .then(() => {
+          return Team.findByIdAndUpdate(
             id,
             {
               name: req.body.name,
@@ -134,7 +129,6 @@ exports.edit = (req, res, next) => {
             },
             { new: true }
           );
-          return r;
         })
         .then((result) => {
           res.status(200).json({
@@ -143,8 +137,5 @@ exports.edit = (req, res, next) => {
           });
         });
     })
-    .catch((error) => {
-      if (!error.statusCode) error.statusCode = 500;
-      next(error);
-    });
+    .catch((error) => next(error));
 };

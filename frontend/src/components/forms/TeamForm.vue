@@ -98,10 +98,10 @@ export default {
           break;
         }
       }
-      if (isChanged) {
+
+      if (!isChanged) {
         editedData.date = getDate();
-      } else if (!isChanged) {
-        //
+        return;
       }
 
       this.$emit('team-edited', {

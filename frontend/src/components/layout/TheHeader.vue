@@ -1,5 +1,5 @@
 <template>
-  <nav>
+  <nav :class="{ disabled: isLoading }">
     <ul>
       <li>
         <router-link to="/employees">employees</router-link>
@@ -26,15 +26,13 @@
 </template>
 
 <script>
-// import BaseButton from '../base/BaseButton.vue';
 export default {
-  components: {
-    // BaseButton
-  },
   computed: {
     isAuth() {
-      console.log(this.$store.getters['user/isAuth']);
       return this.$store.getters['user/isAuth'];
+    },
+    isLoading() {
+      return this.$store.getters['loader/isLoading'];
     }
   },
   methods: {
@@ -50,6 +48,10 @@ export default {
 </script>
 
 <style scoped>
+.disabled {
+  pointer-events: none;
+}
+
 nav {
   background-color: var(--blue);
   color: var(--white);
@@ -105,7 +107,8 @@ a:hover,
   ul {
     width: 100%;
   }
-  .auth-link-desktop {
+  .auth-link-desktop,
+  .logout-desktop {
     display: none;
   }
   .auth-link-mobile {

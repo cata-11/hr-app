@@ -4,6 +4,7 @@ exports.get = (req, res, next) => {
   const page = +req.query.page || 1;
   const maxItems = 10;
   let totalPages = 0;
+
   Employee.find()
     .countDocuments()
     .then((result) => {
@@ -50,6 +51,7 @@ exports.create = (req, res, next) => {
 
 exports.delete = (req, res, next) => {
   const id = req.params.id;
+
   Employee.findByIdAndDelete(id)
     .then(() => {
       res.status(200).json({
@@ -61,6 +63,7 @@ exports.delete = (req, res, next) => {
 
 exports.edit = (req, res, next) => {
   const id = req.params.id;
+
   Employee.findByIdAndUpdate(
     id,
     {

@@ -65,7 +65,6 @@ export default {
     createRole() {
       this.role.date = getDate();
       this.$emit('role-created', { ...this.role });
-      this.resetForm();
     },
     editRole() {
       const initialData = { ...this.roleData };
@@ -79,11 +78,10 @@ export default {
           break;
         }
       }
-
-      if (isChanged) {
+      
+      if (!isChanged) {
         editedData.date = getDate();
-      } else if (!isChanged) {
-        //
+        return;
       }
 
       this.$emit('role-edited', {

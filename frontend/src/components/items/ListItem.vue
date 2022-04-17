@@ -46,9 +46,7 @@ export default {
   computed: {
     itemData() {
       const formatedItem = { ...this.item };
-
       delete formatedItem.id;
-
       return formatedItem;
     },
     hasAccess() {
