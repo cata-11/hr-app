@@ -1,5 +1,5 @@
 <template>
-  <form>
+  <form v-if="hasAccess">
     <TheLoader v-if="isLoading && type === 'edit' && mode === 'edit'" />
     <div v-if="mode === 'edit'" class="close-btn" @click="closeModal"></div>
     <header>
@@ -32,6 +32,11 @@ export default {
     },
     type() {
       return this.$store.getters['loader/type'];
+    },
+    hasAccess() {
+      const isAuth = this.$store.getters['user/isAuth'] === true;
+      const isAdmin = this.$store.getters['user/status'] === 'admin';
+      return isAuth && isAdmin;
     }
   },
   methods: {

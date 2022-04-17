@@ -1,7 +1,12 @@
 <template>
   <section style="position: relative">
     <TheLoader
-      v-if="roles.length === 0 && teams.length === 0 && isLoading"
+      v-if="
+        roles.length === 0 &&
+        teams.length === 0 &&
+        isLoading &&
+        $store.getters['user/status'] === 'admin'
+      "
       :fetchSome="true"
     />
     <EmployeeForm
@@ -89,7 +94,10 @@ export default {
       this.$store.dispatch('loader/toggle', { type: 'add' });
       fetch('http://localhost:8000/employee', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + this.$store.getters['user/token']
+        },
         body: JSON.stringify({
           name: item.name,
           surname: item.surname,
@@ -141,7 +149,10 @@ export default {
 
       fetch('http://localhost:8000/employee/' + id, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + this.$store.getters['user/token']
+        },
         body: JSON.stringify({
           name: data.name,
           surname: data.surname,
@@ -183,7 +194,10 @@ export default {
       const id = this.items[idx].id;
       this.$store.dispatch('loader/toggle', { type: 'delete' });
       fetch('http://localhost:8000/employee/' + id, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+          Authorization: 'Bearer ' + this.$store.getters['user/token']
+        }
       })
         .then((res) => {
           return res.json();

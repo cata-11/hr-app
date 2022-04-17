@@ -59,7 +59,10 @@ export default {
       this.$store.dispatch('loader/toggle', { type: 'add' });
       fetch('http://localhost:8000/role', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + this.$store.getters['user/token']
+        },
         body: JSON.stringify({
           name: item.name
         })
@@ -107,7 +110,10 @@ export default {
 
       fetch('http://localhost:8000/role/' + id, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + this.$store.getters['user/token']
+        },
         body: JSON.stringify({
           name: data.name
         })
@@ -150,7 +156,10 @@ export default {
       const id = this.items[idx].id;
       this.$store.dispatch('loader/toggle', { type: 'delete' });
       fetch('http://localhost:8000/role/' + id, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+          Authorization: 'Bearer ' + this.$store.getters['user/token']
+        }
       })
         .then((res) => {
           return res.json();

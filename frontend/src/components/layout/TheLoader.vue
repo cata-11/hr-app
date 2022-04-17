@@ -32,7 +32,8 @@ section {
 .delete,
 .add,
 .edit,
-.fetch-some {
+.fetch-some,
+.auth {
   background-color: rgba(19, 19, 19, 0.3);
   position: absolute;
   top: 0;

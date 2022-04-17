@@ -9,8 +9,18 @@
       </div>
     </div>
     <div class="btns">
-      <base-button color="yellow" @click="editItem">Edit</base-button>
-      <base-button color="red" @click="deleteItem">Delete</base-button>
+      <base-button
+        color="yellow"
+        @click="editItem"
+        :class="{ disabled: !hasAccess }"
+        >Edit</base-button
+      >
+      <base-button
+        color="red"
+        @click="deleteItem"
+        :class="{ disabled: !hasAccess }"
+        >Delete</base-button
+      >
     </div>
   </li>
 </template>
@@ -25,9 +35,11 @@ export default {
   },
   methods: {
     editItem() {
+      if (!this.hasAccess) return;
       this.$emit('item-edited', this.idx);
     },
     deleteItem() {
+      if (!this.hasAccess) return;
       this.$emit('item-deleted', this.idx);
     }
   },
@@ -37,26 +49,23 @@ export default {
 
       delete formatedItem.id;
 
-      // //TODO: format data on fetch
-
-      // delete formatedItem.__v;
-      // delete formatedItem.updatedAt;
-
-      // if (formatedItem.birthdate)
-      //   formatedItem.birthdate = getDate(formatedItem.birthdate);
-
-      // if (formatedItem.createdAt)
-      //   formatedItem.createdAt = getDate(formatedItem.createdAt);
-
-      // //
-
       return formatedItem;
+    },
+    hasAccess() {
+      const isAuth = this.$store.getters['user/isAuth'] === true;
+      const isAdmin = this.$store.getters['user/status'] === 'admin';
+      return isAuth && isAdmin;
     }
   }
 };
 </script>
 
 <style scoped>
+.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
 li {
   display: flex;
   padding: 0.5rem 1rem;
