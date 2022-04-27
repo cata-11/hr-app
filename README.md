@@ -1,7 +1,7 @@
 # HR APP
 ________
 ## About
-Hr App is an application for employee management. It offers functionality for viewing/adding/editing/deleteing employees, teams and roles as well as authorization.
+Hr App is an application for employee management. It offers functionality for viewing/adding/editing/deleteing employees, teams and roles as well as authentication/authorization.
 
 ## Tech Stack
 **MEVN** (MongoDB/Express/Vue/Node)
@@ -14,9 +14,9 @@ Main views use 2 components, a FormComponent and a ListComponent.
 -- ListComponent named *ListItems.vue* has a child component *ListItem.vue* and renders it for every item passed to *ListItems.vue* from main views. Every *ListItem.vue* has 2 buttons (styled through *BaseButton.vue*) one for editing and another one for deleting an item. The "Edit" button opens the same FormComponent which is populated with item data.
 
 ## Backend architecture
-Server side is composed of middlewares for employees, teams, roles, users and another one for error handling. Each middleware has routes made with Express Router. Employees, teams and roles middlewares have all the same structure that consists of 4 routes that GET/POST/PUT/DELETE requests. Afferent controllers have functions for creating/deleting/editing an item and getting all items from database.
+Server side is composed of middlewares for employees, teams, roles, users and another one for error handling. Each middleware has routes made with Express Router. Employees, teams and roles middlewares have all the same structure that consists of 4 routes that GET/POST/PUT/DELETE requests. Afferent controllers have functions for creating/deleting/editing an item and getting items from database.
 
-**Authorization**
+**Authentication**
 Users middleware has two routes, one for signup and another one for login. Passwords are hashed with *bcrypt*. User login data is transfered to the frontend using *jsonwebtoken* which is used afterwards for detecting user status to authorize editing/adding/deleting items.
 
 ## Database architecture
@@ -51,7 +51,7 @@ Password: String
 Status: String
 
 #### Pagination
-The tehnique used for retrieving limited amount of documents from database (currently set to 10).
+The tehnique used for retrieving limited amount of documents from database.
 
 ## Constraints
 - Unauthorized users and authorized users with status of *guest* can only view data.
@@ -60,10 +60,10 @@ The tehnique used for retrieving limited amount of documents from database (curr
 - Teams with the same name are not allowed, however a manager can be assigned to multiple teams and a team can't be deleted if there are employees in it.
 
 ## Data flow
-Let's take for example creating an employee (the same logic applies for roles and teams).
+Let's take for example creating an employee.
 
 On the frontend user enters data in *EmployeeForm.vue* component: name, surname, email, birthdate, chooses a role from available roles (fetched from database) and a team (each team has a manager so the manager will be selected automatically based on the selected team), then user clicks on *Create* button the *EmployeeForm.vue* then has functions for validating entered data, if it doesn't pass validation then it shows for every separate input if there's something wrong with entered data else data is sent to the parent component, which is *Employees.vue* that then calls a function *addEmployee()* which is sending a post request to the server and waiting for a response.
-On the backend the server receives the request and firstly decodes the users's token stored in the Authorization header to check for users status. If the user has admin status then it continues to the *create()* function were creates a new employee using Employee model, add it to the database and sending back to the client a response. If something went wrong it sends a response with the error message and status code.
+On the backend the server receives the request and firstly decodes the users's token stored in the Authorization header to check for users status. If the user has admin status then it continues to the *create()* function where creates a new employee using Employee model, add it to the database and send back to the client a response. If something went wrong it sends a response with the error message and status code.
 On the frontend the response contains saved item and it's added to the *items* array on frontend, if an error occured then *TheDialog.vue* will pop up showing the error message.
 
 The same logic applies to teams and roles with some additional checks.
